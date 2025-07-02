@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { AiOutlineMenu, AiOutlineClose } from 'react-icons/ai';
+import { FaSearch, FaUserPlus, FaSignInAlt } from 'react-icons/fa';
 import logo from '../assets/logo.png'; // Import the logo
-import { AiOutlineMenu } from 'react-icons/ai'; // Revert back to original icon
 import SideMenu from './SideMenu'; // Import the new side menu
 
 const Header = () => {
@@ -42,15 +43,23 @@ const Header = () => {
         </div>
 
         {/* Mobile Menu (Side Panel) */}
-        <div className={`fixed top-0 right-0 h-full bg-blue-700 w-64 transform ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'} transition-transform duration-300 ease-in-out z-40`}>
-          <div className="p-5 pt-10">
-            <Link to="/pet-shops" className="block text-white py-3 hover:text-yellow-300 transition-colors" onClick={() => setIsMenuOpen(false)}>
+        <div className={`fixed top-0 right-0 h-full bg-blue-700 w-64 transform ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'} transition-transform duration-300 ease-in-out z-40 shadow-xl`}>
+          <div className="absolute top-0 right-0 p-5">
+            <button onClick={toggleMenu} className="text-white">
+              <AiOutlineClose size={28} />
+            </button>
+          </div>
+          <div className="p-5 pt-20">
+            <Link to="/pet-shops" className="flex items-center text-white py-3 hover:text-yellow-300 transition-colors" onClick={() => setIsMenuOpen(false)}>
+              <FaSearch className="mr-3" />
               Discover Pet Shops
             </Link>
-            <Link to="/register" className="block text-white py-3 hover:text-yellow-300 transition-colors" onClick={() => setIsMenuOpen(false)}>
+            <Link to="/register" className="flex items-center text-white py-3 hover:text-yellow-300 transition-colors" onClick={() => setIsMenuOpen(false)}>
+              <FaUserPlus className="mr-3" />
               Register as a Pet Shop
             </Link>
-            <Link to="/login" className="block text-white py-3 hover:text-yellow-300 transition-colors" onClick={() => setIsMenuOpen(false)}>
+            <Link to="/login" className="flex items-center text-white py-3 hover:text-yellow-300 transition-colors" onClick={() => setIsMenuOpen(false)}>
+              <FaSignInAlt className="mr-3" />
               Login
             </Link>
           </div>
