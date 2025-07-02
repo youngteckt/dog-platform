@@ -25,16 +25,37 @@ const Header = () => {
 
           {/* Right Aligned Items */}
           <div className="justify-self-end flex items-center space-x-4 md:space-x-6">
-            <Link to="/pet-shops" className="text-white text-sm md:text-lg font-semibold whitespace-nowrap transition-all duration-300 hover:text-yellow-300 hover:[text-shadow:0_0_8px_#fde047]">
+            {/* Desktop Navigation */}
+            <nav className="hidden md:flex items-center space-x-6">
+              <Link to="/pet-shops" className="text-white hover:text-yellow-300 transition-colors">
+                Discover Pet Shops
+              </Link>
+            </nav>
+
+            {/* Mobile Navigation - Hamburger Icon */}
+            <div className="md:hidden">
+              <button onClick={toggleMenu} className="text-white p-2 rounded-full hover:bg-blue-700 transition-colors">
+                <AiOutlineMenu size={28} />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Menu (Side Panel) */}
+        <div className={`fixed top-0 right-0 h-full bg-blue-700 w-64 transform ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'} transition-transform duration-300 ease-in-out z-40`}>
+          <div className="p-5 pt-10">
+            <Link to="/pet-shops" className="block text-white py-3 hover:text-yellow-300 transition-colors" onClick={() => setIsMenuOpen(false)}>
               Discover Pet Shops
             </Link>
-            <button onClick={toggleMenu} className="text-white p-2 rounded-full hover:bg-blue-700 transition-colors">
-              <AiOutlineMenu size={28} />
-            </button>
+            <Link to="/register" className="block text-white py-3 hover:text-yellow-300 transition-colors" onClick={() => setIsMenuOpen(false)}>
+              Register as a Pet Shop
+            </Link>
+            <Link to="/login" className="block text-white py-3 hover:text-yellow-300 transition-colors" onClick={() => setIsMenuOpen(false)}>
+              Login
+            </Link>
           </div>
         </div>
       </header>
-      <SideMenu isOpen={isMenuOpen} onClose={toggleMenu} />
     </>
   );
 };
