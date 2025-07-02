@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import logo from '../assets/logo.png'; // Import the logo
-import { AiOutlineMenu } from 'react-icons/ai'; // Import hamburger icon
+import { FaBars } from 'react-icons/fa6'; // Import hamburger icon from a compatible set
 import SideMenu from './SideMenu'; // Import the new side menu
 
 const Header = () => {
@@ -29,7 +29,7 @@ const Header = () => {
               Discover Pet Shops
             </Link>
             <button onClick={toggleMenu} className="text-white p-2 rounded-full hover:bg-blue-700 transition-colors">
-              <AiOutlineMenu size={28} />
+              <FaBars size={28} />
             </button>
           </div>
         </div>
