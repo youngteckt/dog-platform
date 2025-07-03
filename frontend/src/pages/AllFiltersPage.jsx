@@ -99,12 +99,12 @@ const AllFiltersPage = () => {
         style={{ maxHeight: '95vh' }}
       >
         {/* Handle bar for visual feedback */}
-        <div className="flex justify-center pt-3 pb-2">
+        <div className="flex justify-center pt-4 pb-3">
           <div className="w-8 h-1 bg-gray-300 rounded-full"></div>
         </div>
         
         {/* Header */}
-        <div className="flex justify-between items-center px-4 pt-4 pb-4 border-b">
+        <div className="flex justify-between items-center px-4 pt-6 pb-4 border-b">
           <h2 className="text-base font-semibold">All Filters</h2>
           <div className="flex items-center space-x-6">
             <button onClick={handleClear} className="text-blue-600 font-medium hover:text-blue-700 active:text-blue-800">
