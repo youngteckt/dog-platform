@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export const FilterModal = ({ isOpen, onClose, title, items, selectedItems, onApply }) => {
+const FilterModal = ({ isOpen, onClose, title, items, selectedItems, onApply }) => {
   const [currentSelection, setCurrentSelection] = useState(selectedItems || []);
 
   useEffect(() => {
@@ -71,3 +71,5 @@ export const FilterModal = ({ isOpen, onClose, title, items, selectedItems, onAp
     </div>
   );
 };
+
+export default FilterModal;
