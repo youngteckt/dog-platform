@@ -80,7 +80,7 @@ const AllFiltersPage = () => {
       </div>
 
       {/* Filter Sections */}
-      <div className="p-4">
+      <div className="p-4 pb-24">
         <CheckboxGroup 
           title="Dog Breed"
           items={initialState.allBreeds}
