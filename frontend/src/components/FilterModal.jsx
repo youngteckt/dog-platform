@@ -57,7 +57,7 @@ const FilterModal = ({ isOpen, onClose, title, items, selectedItems, onApply }) 
         </div>
 
         {/* Checkbox List: Grows to fill space and scrolls */}
-        <div className="overflow-y-auto flex-grow">
+        <div className="overflow-y-auto flex-grow min-h-0">
             <div className="p-4">
                 <div className="grid grid-cols-2 gap-y-4 gap-x-2">
                     {items.map(item => (
