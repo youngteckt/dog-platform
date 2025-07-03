@@ -10,7 +10,11 @@ const HomePage = () => {
   const location = useLocation();
 
   const [dogs, setDogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [displayedDogs, setDisplayedDogs] = useState([]);
+  const [offset, setOffset] = useState(0);
   
   // State for individual modals
   const [isBreedModalOpen, setIsBreedModalOpen] = useState(false);
@@ -22,13 +26,55 @@ const HomePage = () => {
   const [selectedPetShops, setSelectedPetShops] = useState([]);
   const [selectedPriceRanges, setSelectedPriceRanges] = useState([]);
 
+  // Cache configuration
+  const CACHE_KEY = 'dogs_cache';
+  const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+  // Helper function to check if localStorage cache is valid
+  const isCacheValid = (cacheData) => {
+    return cacheData && cacheData.timestamp && (Date.now() - cacheData.timestamp) < CACHE_TTL;
+  };
+
+  // Helper function to get cached data
+  const getCachedData = () => {
+    try {
+      const cached = localStorage.getItem(CACHE_KEY);
+      return cached ? JSON.parse(cached) : null;
+    } catch (error) {
+      console.error('Error reading cache:', error);
+      return null;
+    }
+  };
+
+  // Helper function to set cached data
+  const setCachedData = (data) => {
+    try {
+      const cacheData = {
+        data: data,
+        timestamp: Date.now()
+      };
+      localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
+    } catch (error) {
+      console.error('Error setting cache:', error);
+    }
+  };
+
   useEffect(() => {
     const fetchDogs = async () => {
       try {
-        const data = await apiFetch('/dogs');
-        setDogs(data);
+        setLoading(true);
+        const cachedData = getCachedData();
+        if (isCacheValid(cachedData)) {
+          setDogs(cachedData.data);
+        } else {
+          const data = await apiFetch('/dogs');
+          setDogs(data);
+          setCachedData(data);
+        }
       } catch (error) {
         console.error('Failed to fetch dogs:', error);
+      } finally {
+        setLoading(false);
       }
     };
     fetchDogs();
@@ -78,6 +124,18 @@ const HomePage = () => {
     return searchMatch && breedMatch && petShopMatch && priceMatch;
   });
 
+  // Pagination configuration
+  const ITEMS_PER_PAGE = 20;
+  const hasMoreItems = filteredDogs.length > displayedDogs.length;
+
+  useEffect(() => {
+    const loadDogs = () => {
+      const end = offset + ITEMS_PER_PAGE;
+      setDisplayedDogs(filteredDogs.slice(0, end));
+    };
+    loadDogs();
+  }, [filteredDogs, offset]);
+
   const handleClearFilters = () => {
     setSearchTerm('');
     setSelectedBreeds([]);
@@ -103,6 +161,12 @@ const HomePage = () => {
   };
 
   const activeFilterCount = selectedBreeds.length + selectedPetShops.length + selectedPriceRanges.length;
+
+  const handleLoadMore = () => {
+    setLoadingMore(true);
+    setOffset(offset + ITEMS_PER_PAGE);
+    setLoadingMore(false);
+  };
 
   return (
     <div>
@@ -162,11 +226,43 @@ const HomePage = () => {
       </div>
 
       {/* Dog Listings */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {filteredDogs.map((dog) => (
-          <DogCard key={dog._id} dog={dog} />
-        ))}
-      </div>
+      {loading ? (
+        <div className="flex justify-center py-10">
+          <svg className="animate-spin h-5 w-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {displayedDogs.map((dog) => (
+            <DogCard key={dog._id} dog={dog} />
+          ))}
+        </div>
+      )}
+
+      {/* Load More Button */}
+      {!loading && hasMoreItems && (
+        <div className="flex justify-center mt-8">
+          <button 
+            onClick={handleLoadMore}
+            disabled={loadingMore}
+            className="bg-blue-600 text-white font-semibold py-3 px-8 rounded-full hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+          >
+            {loadingMore ? (
+              <>
+                <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>Loading...</span>
+              </>
+            ) : (
+              <span>Load More Puppies</span>
+            )}
+          </button>
+        </div>
+      )}
 
       {/* Modals */}
       <FilterModal
