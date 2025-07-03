@@ -10,16 +10,12 @@ const PRICE_RANGES = [
 
 const PriceFilterModal = ({ isOpen, onClose, onApply, selectedRanges }) => {
   // Internal state to manage checkbox selections before applying
-  const [currentSelection, setCurrentSelection] = useState(selectedRanges);
+  const [currentSelection, setCurrentSelection] = useState(selectedRanges || []);
 
   // Sync internal state if the parent's state changes
   useEffect(() => {
-    setCurrentSelection(selectedRanges);
+    setCurrentSelection(selectedRanges || []);
   }, [selectedRanges, isOpen]);
-
-  if (!isOpen) {
-    return null;
-  }
 
   const handleCheckboxChange = (label) => {
     setCurrentSelection(prev =>
@@ -38,56 +34,77 @@ const PriceFilterModal = ({ isOpen, onClose, onApply, selectedRanges }) => {
     setCurrentSelection([]);
   };
 
+  if (!isOpen) return null;
+
   return (
-    // Semi-transparent backdrop
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-40 flex justify-end" onClick={onClose}>
-      {/* Modal Content */}
+    <>
+      {/* Backdrop */}
       <div 
-        className="bg-white w-full max-w-md h-full shadow-xl relative transform transition-transform duration-300 ease-in-out"
-        onClick={(e) => e.stopPropagation()}
-        style={{ transform: isOpen ? 'translateX(0)' : 'translateX(100%)' }}
+        className={`fixed inset-0 bg-black transition-opacity duration-300 z-40 ${
+          isOpen ? 'bg-opacity-50' : 'bg-opacity-0'
+        }`}
+        onClick={onClose}
+      />
+      
+      {/* Bottom Sheet Modal */}
+      <div 
+        className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-2xl z-50 transform transition-transform duration-300 ease-out ${
+          isOpen ? 'translate-y-0' : 'translate-y-full'
+        }`}
+        style={{ maxHeight: '95vh' }}
       >
+        {/* Handle bar for visual feedback */}
+        <div className="flex justify-center pt-2 pb-1">
+          <div className="w-8 h-1 bg-gray-300 rounded-full"></div>
+        </div>
+        
         {/* Header */}
-        <div className="flex justify-between items-center p-4 border-b">
-          <h2 className="text-lg font-semibold flex items-center">
-            <svg className="w-5 h-5 mr-2 text-pink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V10zM15 10a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2a1 1 0 01-1-1v-4z"></path></svg>
-            Filters
-          </h2>
-          <button onClick={onClose} className="text-2xl font-light">&times;</button>
+        <div className="flex justify-between items-center px-4 py-2 border-b">
+          <h2 className="text-base font-semibold">Price</h2>
+          <button 
+            onClick={onClose} 
+            className="text-gray-500 hover:text-gray-700 text-xl leading-none"
+          >
+            ×
+          </button>
         </div>
 
-        {/* Sub-Header */}
-        <div className="flex items-center p-4">
-            <button onClick={onClose} className="mr-4">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>
-            </button>
-            <h3 className="font-semibold">Price</h3>
-        </div>
-
-        {/* Checkbox List */}
-        <div className="p-4 overflow-y-auto h-[calc(100%-180px)]">
-            <div className="flex flex-col space-y-4 p-4">
-                {PRICE_RANGES.map(({ label }) => (
-                    <label key={label} className="flex items-center space-x-3 cursor-pointer">
-                        <input
-                            type="checkbox"
-                            className="h-5 w-5 rounded border-gray-400 text-brand-blue focus:ring-brand-blue"
-                            checked={currentSelection.includes(label)}
-                            onChange={() => handleCheckboxChange(label)}
-                        />
-                        <span className="select-none">{label}</span>
-                    </label>
-                ))}
+        {/* Scrollable Content */}
+        <div className="overflow-y-auto" style={{ maxHeight: 'calc(95vh - 100px)' }}>
+          <div className="px-4 py-4 pb-24">
+            <div className="space-y-3">
+              {PRICE_RANGES.map(({ label }) => (
+                <label key={label} className="flex items-center space-x-3 cursor-pointer py-2 px-2 rounded-lg hover:bg-gray-50 active:bg-gray-100">
+                  <input
+                    type="checkbox"
+                    className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-2"
+                    checked={currentSelection.includes(label)}
+                    onChange={() => handleCheckboxChange(label)}
+                  />
+                  <span className="select-none text-base">{label}</span>
+                </label>
+              ))}
             </div>
+          </div>
         </div>
 
-        {/* Footer */}
-        <div className="absolute bottom-0 left-0 right-0 flex justify-between items-center p-4 border-t bg-white">
-          <button onClick={handleClear} className="text-brand-blue font-semibold hover:underline">Clear Selection</button>
-          <button onClick={handleApply} className="bg-gray-900 text-white font-bold py-3 px-10 rounded-full hover:bg-gray-700 transition-colors">Apply</button>
+        {/* Fixed Footer */}
+        <div className="border-t bg-white px-4 py-3 flex justify-between items-center">
+          <button 
+            onClick={handleClear} 
+            className="text-blue-600 font-medium hover:text-blue-700 active:text-blue-800"
+          >
+            Clear All
+          </button>
+          <button 
+            onClick={handleApply} 
+            className="bg-blue-600 text-white font-semibold py-3 px-8 rounded-full hover:bg-blue-700 active:bg-blue-800 transition-colors"
+          >
+            Apply Filters
+          </button>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
