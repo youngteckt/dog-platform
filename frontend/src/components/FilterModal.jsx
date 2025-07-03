@@ -31,7 +31,7 @@ const FilterModal = ({ isOpen, onClose, title, items, selectedItems, onApply }) 
     <div className="fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-center p-4" onClick={onClose}>
       {/* Modal Content - Simple centered approach */}
       <div 
-        className="bg-white w-full max-w-md max-h-[90vh] rounded-lg shadow-xl flex flex-col" 
+        className="bg-white w-full max-w-md max-h-[95vh] rounded-lg shadow-xl flex flex-col" 
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header: Fixed size */}
@@ -45,7 +45,7 @@ const FilterModal = ({ isOpen, onClose, title, items, selectedItems, onApply }) 
 
         {/* Checkbox List: Simple scrollable area */}
         <div className="overflow-y-auto flex-1 min-h-0">
-            <div className="p-4">
+            <div className="p-4 pb-20">
                 <div className="grid grid-cols-1 gap-y-4">
                     {items.map(item => (
                         <label key={item} className="flex items-center space-x-3 cursor-pointer py-2">
