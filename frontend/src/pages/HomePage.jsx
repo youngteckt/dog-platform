@@ -113,7 +113,7 @@ const HomePage = () => {
       </div>
 
       {/* Search Bar */}
-      <div className="mb-6">
+      <div className="mb-4">
         <input
           type="text"
           placeholder="Search by breed or pet shop..."
@@ -124,19 +124,19 @@ const HomePage = () => {
       </div>
 
       {/* Filter Controls */}
-      <div className="py-4 mb-6 sticky top-0 bg-white z-10 shadow-sm rounded-lg">
+      <div className="py-2 mb-4 sticky top-0 bg-white z-10 shadow-sm rounded-lg">
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-2 md:space-x-4">
             {/* Individual Filter Buttons */}
-            <button onClick={() => setIsBreedModalOpen(true)} className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-full text-sm font-medium hover:bg-gray-100">
+            <button onClick={() => setIsBreedModalOpen(true)} className="flex items-center justify-center px-3 py-1.5 border border-gray-300 rounded-full text-sm font-medium hover:bg-gray-100">
               Dog Breed
               <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
             </button>
-            <button onClick={() => setIsPetShopModalOpen(true)} className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-full text-sm font-medium hover:bg-gray-100">
+            <button onClick={() => setIsPetShopModalOpen(true)} className="flex items-center justify-center px-3 py-1.5 border border-gray-300 rounded-full text-sm font-medium hover:bg-gray-100">
               Pet Shop
               <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
             </button>
-            <button onClick={() => setIsPriceModalOpen(true)} className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-full text-sm font-medium hover:bg-gray-100">
+            <button onClick={() => setIsPriceModalOpen(true)} className="flex items-center justify-center px-3 py-1.5 border border-gray-300 rounded-full text-sm font-medium hover:bg-gray-100">
               Price
               <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
             </button>
@@ -144,7 +144,7 @@ const HomePage = () => {
             {/* All Filters Button */}
             <button 
               onClick={handleOpenAllFilters}
-              className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-full text-sm font-medium hover:bg-gray-100 relative"
+              className="flex items-center justify-center px-3 py-1.5 border border-gray-300 rounded-full text-sm font-medium hover:bg-gray-100 relative"
             >
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V18a1 1 0 01-1 1h-2a1 1 0 01-1-1v-4.586L2.293 7.707A1 1 0 012 7V4z"></path></svg>
               All Filters
