@@ -57,7 +57,7 @@ const FilterModal = ({ isOpen, onClose, title, items, selectedItems, onApply }) 
         </div>
 
         {/* Checkbox List - This area will now grow and scroll correctly */}
-        <div className="p-4 overflow-y-auto flex-grow">
+        <div className="p-4 overflow-y-auto flex-grow pb-24">
             <div className="grid grid-cols-2 gap-y-4 gap-x-2">
                 {items.map(item => (
                     <label key={item} className="flex items-center space-x-3 cursor-pointer">
