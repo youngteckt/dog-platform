@@ -27,47 +27,74 @@ const FilterModal = ({ isOpen, onClose, title, items, selectedItems, onApply }) 
   if (!isOpen) return null;
 
   return (
-    // Semi-transparent backdrop
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-40 flex items-center justify-center p-2" onClick={onClose}>
-      {/* Modal Content - Simple centered approach */}
+    <>
+      {/* Backdrop */}
       <div 
-        className="bg-white w-full max-w-md h-[98vh] rounded-lg shadow-xl flex flex-col" 
-        onClick={(e) => e.stopPropagation()}
+        className={`fixed inset-0 bg-black transition-opacity duration-300 z-40 ${
+          isOpen ? 'bg-opacity-50' : 'bg-opacity-0'
+        }`}
+        onClick={onClose}
+      />
+      
+      {/* Bottom Sheet Modal */}
+      <div 
+        className={`fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-2xl z-50 transform transition-transform duration-300 ease-out ${
+          isOpen ? 'translate-y-0' : 'translate-y-full'
+        }`}
+        style={{ maxHeight: '85vh' }}
       >
-        {/* Header: Minimal size */}
-        <div className="flex justify-between items-center p-3 border-b flex-shrink-0">
-          <h2 className="text-base font-semibold">
-            {title}
-          </h2>
-          <button onClick={onClose} className="text-xl font-light">&times;</button>
+        {/* Handle bar for visual feedback */}
+        <div className="flex justify-center pt-3 pb-2">
+          <div className="w-10 h-1 bg-gray-300 rounded-full"></div>
+        </div>
+        
+        {/* Header */}
+        <div className="flex justify-between items-center px-4 pb-3 border-b">
+          <h2 className="text-lg font-semibold">{title}</h2>
+          <button 
+            onClick={onClose} 
+            className="text-gray-500 hover:text-gray-700 text-2xl leading-none"
+          >
+            ×
+          </button>
         </div>
 
-        {/* Checkbox List: Takes up most space */}
-        <div className="overflow-y-auto flex-1 min-h-0">
-            <div className="p-3 pb-32">
-                <div className="grid grid-cols-1 gap-y-3">
-                    {items.map(item => (
-                        <label key={item} className="flex items-center space-x-3 cursor-pointer py-1">
-                            <input
-                                type="checkbox"
-                                className="h-4 w-4 rounded border-gray-400 text-brand-blue focus:ring-brand-blue"
-                                checked={currentSelection.includes(item)}
-                                onChange={() => handleCheckboxChange(item)}
-                            />
-                            <span className="select-none text-sm">{item}</span>
-                        </label>
-                    ))}
-                </div>
+        {/* Scrollable Content */}
+        <div className="overflow-y-auto" style={{ maxHeight: 'calc(85vh - 140px)' }}>
+          <div className="px-4 py-4">
+            <div className="space-y-4">
+              {items.map(item => (
+                <label key={item} className="flex items-center space-x-3 cursor-pointer py-2 px-2 rounded-lg hover:bg-gray-50 active:bg-gray-100">
+                  <input
+                    type="checkbox"
+                    className="h-5 w-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500 focus:ring-2"
+                    checked={currentSelection.includes(item)}
+                    onChange={() => handleCheckboxChange(item)}
+                  />
+                  <span className="select-none text-base">{item}</span>
+                </label>
+              ))}
             </div>
+          </div>
         </div>
 
-        {/* Footer: Minimal size */}
-        <div className="flex justify-between items-center p-3 border-t bg-white flex-shrink-0">
-          <button onClick={handleClear} className="text-brand-blue font-semibold hover:underline text-sm">Clear</button>
-          <button onClick={handleApply} className="bg-gray-900 text-white font-bold py-2 px-6 rounded-full hover:bg-gray-700 transition-colors text-sm">Apply</button>
+        {/* Fixed Footer */}
+        <div className="border-t bg-white px-4 py-4 flex justify-between items-center">
+          <button 
+            onClick={handleClear} 
+            className="text-blue-600 font-medium hover:text-blue-700 active:text-blue-800"
+          >
+            Clear All
+          </button>
+          <button 
+            onClick={handleApply} 
+            className="bg-blue-600 text-white font-semibold py-3 px-8 rounded-full hover:bg-blue-700 active:bg-blue-800 transition-colors"
+          >
+            Apply Filters
+          </button>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
