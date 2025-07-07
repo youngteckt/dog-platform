@@ -1,16 +1,15 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
 // Simple test component
 const TestRegisterPage = () => {
   return (
     <div style={{ padding: '20px', backgroundColor: 'lightblue', minHeight: '400px' }}>
-      <h1 style={{ color: 'red', fontSize: '32px' }}>🚨 DIRECT TEST: Register Pet Shop</h1>
-      <p style={{ color: 'black', fontSize: '20px' }}>This is a direct test in App.jsx</p>
-      <p style={{ color: 'green', fontSize: '16px' }}>If you see this, routing works but RegisterPetShopPage component has issues</p>
+      <h1 style={{ color: 'red', fontSize: '32px' }}>🚨 NO ROUTER TEST: Register Pet Shop</h1>
+      <p style={{ color: 'black', fontSize: '20px' }}>This bypasses React Router entirely</p>
+      <p style={{ color: 'green', fontSize: '16px' }}>If you see this, Router was the problem!</p>
       <div style={{ backgroundColor: 'orange', padding: '10px', marginTop: '20px' }}>
-        <strong>🎯 HEADER REMOVED TEST</strong><br/>
-        If you can see this orange box, the Header component was causing the blank page issue!
+        <strong>🎯 ROUTER REMOVED TEST</strong><br/>
+        If you can see this orange box, React Router was causing the issue!
       </div>
     </div>
   );
@@ -26,9 +25,9 @@ import PetShopDetailsPage from './pages/PetShopDetailsPage';
 
 function App() {
   return (
-    <Router>
+    <div>
       <div style={{ backgroundColor: 'yellow', padding: '10px', textAlign: 'center' }}>
-        <strong>🚨 HEADER TEMPORARILY REMOVED FOR DEBUGGING</strong>
+        <strong>🚨 ROUTER TEMPORARILY REMOVED FOR DEBUGGING</strong>
       </div>
       <main style={{ 
         position: 'relative',
@@ -40,17 +39,9 @@ function App() {
         padding: '20px',
         zIndex: '1'
       }}>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/dogs/:id" element={<DogDetailsPage />} />
-          <Route path="/filters" element={<AllFiltersPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register-pet-shop" element={<TestRegisterPage />} />
-          <Route path="/pet-shops" element={<PetShopsPage />} />
-          <Route path="/pet-shops/:id" element={<PetShopDetailsPage />} />
-        </Routes>
+        <TestRegisterPage />
       </main>
-    </Router>
+    </div>
   );
 }
 
