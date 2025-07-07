@@ -120,8 +120,8 @@ const AllFiltersPage = () => {
         </div>
 
         {/* Scrollable Content */}
-        <div className="overflow-y-auto" style={{ maxHeight: 'calc(95vh - 120px)' }}>
-          <div className="px-4 py-4 pb-24">
+        <div className="overflow-y-auto" style={{ maxHeight: 'calc(95vh - 180px)' }}>
+          <div className="px-4 py-4 pb-6">
             <CheckboxGroup 
               title="Dog Breed"
               items={initialState.allBreeds}
@@ -144,7 +144,7 @@ const AllFiltersPage = () => {
         </div>
 
         {/* Fixed Footer */}
-        <div className="border-t bg-white px-4 py-3 flex justify-center">
+        <div className="border-t bg-white px-4 py-4 flex justify-center sticky bottom-0">
           <button 
             onClick={handleApply} 
             className="bg-blue-600 text-white font-semibold py-3 w-full max-w-md rounded-full hover:bg-blue-700 active:bg-blue-800 transition-colors"
