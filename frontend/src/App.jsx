@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 
 // Simple test components (inline, no imports)
 const TestHomePage = () => <div style={{padding: '20px', backgroundColor: 'lightgreen'}}>✅ HOME PAGE WORKS</div>;
@@ -23,6 +23,15 @@ function App() {
       <div style={{ backgroundColor: 'yellow', padding: '10px', textAlign: 'center' }}>
         <strong>🚨 TESTING ROUTER WITH SIMPLE COMPONENTS</strong>
       </div>
+      
+      {/* Simple Navigation Menu */}
+      <nav style={{ backgroundColor: '#333', padding: '10px', textAlign: 'center' }}>
+        <Link to="/" style={{ color: 'white', margin: '0 15px', textDecoration: 'none' }}>🏠 Home</Link>
+        <Link to="/register-pet-shop" style={{ color: 'white', margin: '0 15px', textDecoration: 'none' }}>📝 Register Pet Shop</Link>
+        <Link to="/filters" style={{ color: 'white', margin: '0 15px', textDecoration: 'none' }}>🔍 Filters</Link>
+        <Link to="/login" style={{ color: 'white', margin: '0 15px', textDecoration: 'none' }}>🔐 Login</Link>
+      </nav>
+      
       <main style={{ 
         position: 'relative',
         top: '0',
