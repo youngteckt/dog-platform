@@ -1,33 +1,27 @@
 import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
-// Simple test component
-const TestRegisterPage = () => {
-  return (
-    <div style={{ padding: '20px', backgroundColor: 'lightblue', minHeight: '400px' }}>
-      <h1 style={{ color: 'red', fontSize: '32px' }}>🚨 NO ROUTER TEST: Register Pet Shop</h1>
-      <p style={{ color: 'black', fontSize: '20px' }}>This bypasses React Router entirely</p>
-      <p style={{ color: 'green', fontSize: '16px' }}>If you see this, Router was the problem!</p>
-      <div style={{ backgroundColor: 'orange', padding: '10px', marginTop: '20px' }}>
-        <strong>🎯 ROUTER REMOVED TEST</strong><br/>
-        If you can see this orange box, React Router was causing the issue!
-      </div>
+// Simple test components (inline, no imports)
+const TestHomePage = () => <div style={{padding: '20px', backgroundColor: 'lightgreen'}}>✅ HOME PAGE WORKS</div>;
+const TestRegisterPage = () => (
+  <div style={{ padding: '20px', backgroundColor: 'lightblue', minHeight: '400px' }}>
+    <h1 style={{ color: 'red', fontSize: '32px' }}>🎉 ROUTER WORKS! Register Pet Shop</h1>
+    <p style={{ color: 'black', fontSize: '20px' }}>React Router is working with simple components!</p>
+    <p style={{ color: 'green', fontSize: '16px' }}>The issue was with imported page components, not Router itself.</p>
+    <div style={{ backgroundColor: 'orange', padding: '10px', marginTop: '20px' }}>
+      <strong>🎯 ROUTER + SIMPLE COMPONENTS TEST</strong><br/>
+      Now we know one of the imported page components has a critical error!
     </div>
-  );
-};
-
-// Import other pages
-import HomePage from './pages/HomePage';
-import DogDetailsPage from './pages/DogDetailsPage';
-import AllFiltersPage from './pages/AllFiltersPage';
-import LoginPage from './pages/LoginPage';
-import PetShopsPage from './pages/PetShopsPage';
-import PetShopDetailsPage from './pages/PetShopDetailsPage';
+  </div>
+);
+const TestFiltersPage = () => <div style={{padding: '20px', backgroundColor: 'lightyellow'}}>✅ FILTERS PAGE WORKS</div>;
+const TestLoginPage = () => <div style={{padding: '20px', backgroundColor: 'lightcoral'}}>✅ LOGIN PAGE WORKS</div>;
 
 function App() {
   return (
-    <div>
+    <Router>
       <div style={{ backgroundColor: 'yellow', padding: '10px', textAlign: 'center' }}>
-        <strong>🚨 ROUTER TEMPORARILY REMOVED FOR DEBUGGING</strong>
+        <strong>🚨 TESTING ROUTER WITH SIMPLE COMPONENTS</strong>
       </div>
       <main style={{ 
         position: 'relative',
@@ -39,9 +33,14 @@ function App() {
         padding: '20px',
         zIndex: '1'
       }}>
-        <TestRegisterPage />
+        <Routes>
+          <Route path="/" element={<TestHomePage />} />
+          <Route path="/filters" element={<TestFiltersPage />} />
+          <Route path="/login" element={<TestLoginPage />} />
+          <Route path="/register-pet-shop" element={<TestRegisterPage />} />
+        </Routes>
       </main>
-    </div>
+    </Router>
   );
 }
 
