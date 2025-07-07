@@ -18,6 +18,8 @@ router.post('/', async (req, res) => {
   }
 
   try {
+    console.log('Attempting to create registration record:', { shopName, contactName, email });
+    
     // Create a new record in the "Registrations" table in Airtable
     const newRecord = await base('Registrations').create([
       {
@@ -25,22 +27,46 @@ router.post('/', async (req, res) => {
           'Pet Shop Name': shopName,
           'Contact Person': contactName,
           'Email Address': email,
-          'Message': message || '', // Handle optional message
-          'Status': 'New', // Set default status
+          'Message': message || '',
+          'Status': 'New', // Single select field with options: New, Contacted, Approved
+          'Submitted At': new Date().toISOString(),
         },
       },
     ]);
 
     console.log('New registration inquiry saved:', newRecord[0].id);
-    // Send a success response back to the client
     res.status(201).json({ 
-      message: 'Inquiry submitted successfully!', 
+      message: 'Inquiry submitted successfully! Our team will contact you soon.',
       recordId: newRecord[0].id 
     });
 
   } catch (error) {
-    console.error('Airtable API error:', error);
-    res.status(500).json({ message: 'Failed to submit inquiry.', error: error.message });
+    console.error('Airtable API error details:', {
+      message: error.message,
+      status: error.statusCode,
+      error: error.error,
+      details: error
+    });
+    
+    // Provide more specific error messages
+    if (error.message && error.message.includes('INVALID_REQUEST_MISSING_FIELDS')) {
+      return res.status(400).json({ 
+        message: 'Missing required fields in Airtable. Please check the table structure.',
+        error: 'Missing required fields'
+      });
+    }
+    
+    if (error.message && error.message.includes('NOT_FOUND')) {
+      return res.status(500).json({ 
+        message: 'Registrations table not found in Airtable.',
+        error: 'Table not found'
+      });
+    }
+    
+    res.status(500).json({ 
+      message: 'Failed to submit inquiry. Please try again later.',
+      error: error.message 
+    });
   }
 });
 
