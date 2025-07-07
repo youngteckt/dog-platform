@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Header from './components/Header';
 
 // Simple test component
 const TestRegisterPage = () => {
@@ -9,6 +8,10 @@ const TestRegisterPage = () => {
       <h1 style={{ color: 'red', fontSize: '32px' }}>🚨 DIRECT TEST: Register Pet Shop</h1>
       <p style={{ color: 'black', fontSize: '20px' }}>This is a direct test in App.jsx</p>
       <p style={{ color: 'green', fontSize: '16px' }}>If you see this, routing works but RegisterPetShopPage component has issues</p>
+      <div style={{ backgroundColor: 'orange', padding: '10px', marginTop: '20px' }}>
+        <strong>🎯 HEADER REMOVED TEST</strong><br/>
+        If you can see this orange box, the Header component was causing the blank page issue!
+      </div>
     </div>
   );
 };
@@ -24,7 +27,9 @@ import PetShopDetailsPage from './pages/PetShopDetailsPage';
 function App() {
   return (
     <Router>
-      <Header />
+      <div style={{ backgroundColor: 'yellow', padding: '10px', textAlign: 'center' }}>
+        <strong>🚨 HEADER TEMPORARILY REMOVED FOR DEBUGGING</strong>
+      </div>
       <main style={{ 
         position: 'relative',
         top: '0',
