@@ -25,7 +25,16 @@ function App() {
   return (
     <Router>
       <Header />
-      <main className="container mx-auto p-4">
+      <main style={{ 
+        position: 'relative',
+        top: '0',
+        left: '0',
+        width: '100%',
+        minHeight: '100vh',
+        backgroundColor: '#f9f9f9',
+        padding: '20px',
+        zIndex: '1'
+      }}>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/dogs/:id" element={<DogDetailsPage />} />
