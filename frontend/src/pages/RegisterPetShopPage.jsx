@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { apiFetch } from '../utils/api';
 
 const RegisterPetShopPage = () => {
+  console.log('RegisterPetShopPage component is rendering...');
+  
   const [formData, setFormData] = useState({
     shopName: '',
     contactName: '',
@@ -12,8 +14,12 @@ const RegisterPetShopPage = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
 
+  // Debug: Log component mount
+  console.log('RegisterPetShopPage mounted, formData:', formData);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
+    console.log('Form field changed:', name, value);
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
