@@ -24,6 +24,8 @@ const RegisterPetShopPage = () => {
     setSubmitStatus(null);
 
     try {
+      console.log('Submitting form data:', formData);
+      
       const response = await fetch('/api/registrations', {
         method: 'POST',
         headers: {
@@ -32,14 +34,22 @@ const RegisterPetShopPage = () => {
         body: JSON.stringify(formData),
       });
 
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
+
       if (response.ok) {
+        const result = await response.json();
+        console.log('Success response:', result);
         setSubmitStatus('success');
         setFormData({ shopName: '', contactName: '', phoneNumber: '', email: '', message: '' });
       } else {
+        const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+        console.error('Error response:', errorData);
+        console.error('Response status:', response.status);
         setSubmitStatus('error');
       }
     } catch (error) {
-      console.error('Error submitting form:', error);
+      console.error('Network error submitting form:', error);
       setSubmitStatus('error');
     } finally {
       setIsSubmitting(false);

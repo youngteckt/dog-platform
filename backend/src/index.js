@@ -13,6 +13,11 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Test endpoint
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'API is working!', timestamp: new Date().toISOString() });
+});
+
 app.use('/api/dogs', dogRoutes);
 app.use('/api/pet-shops', petShopRoutes);
 app.use('/api/registrations', registrationRoutes);

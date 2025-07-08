@@ -8,12 +8,30 @@ const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process
 
 const router = express.Router();
 
+// Test endpoint for registrations
+router.get('/test', (req, res) => {
+  res.json({ 
+    message: 'Registrations API is working!',
+    hasApiKey: !!process.env.AIRTABLE_API_KEY,
+    hasBaseId: !!process.env.AIRTABLE_BASE_ID,
+    timestamp: new Date().toISOString()
+  });
+});
+
 // POST /api/registrations - Handles new pet shop registration inquiries
 router.post('/', async (req, res) => {
+  console.log('Registration POST request received');
+  console.log('Request body:', req.body);
+  console.log('Environment check:', {
+    hasApiKey: !!process.env.AIRTABLE_API_KEY,
+    hasBaseId: !!process.env.AIRTABLE_BASE_ID
+  });
+
   const { shopName, contactName, phoneNumber, email, message } = req.body;
 
   // Basic validation
   if (!shopName || !contactName || !phoneNumber || !email) {
+    console.log('Validation failed - missing required fields');
     return res.status(400).json({ message: 'Pet Shop Name, Contact Person, Phone Number, and Email are required.' });
   }
 
@@ -66,7 +84,8 @@ router.post('/', async (req, res) => {
     
     res.status(500).json({ 
       message: 'Failed to submit inquiry. Please try again later.',
-      error: 'Server error'
+      error: 'Server error',
+      details: error.message
     });
   }
 });
