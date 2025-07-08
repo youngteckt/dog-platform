@@ -1,12 +1,19 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Header from './components/Header';
-import RegisterPetShopPage from './pages/RegisterPetShopPage';
 
 // Simple test components for other routes (keep these working)
 const TestHomePage = () => <div style={{padding: '20px', backgroundColor: 'lightgreen'}}>✅ HOME PAGE WORKS</div>;
 const TestFiltersPage = () => <div style={{padding: '20px', backgroundColor: 'lightyellow'}}>✅ FILTERS PAGE WORKS</div>;
 const TestLoginPage = () => <div style={{padding: '20px', backgroundColor: 'lightcoral'}}>✅ LOGIN PAGE WORKS</div>;
+
+// Inline RegisterPetShopPage to bypass import issue
+const InlineRegisterPage = () => (
+  <div style={{padding: '20px', backgroundColor: 'lightblue', fontSize: '24px'}}>
+    🎯 INLINE REGISTER PAGE WORKS!<br/>
+    This bypasses the import entirely.
+  </div>
+);
 
 function App() {
   return (
@@ -26,7 +33,7 @@ function App() {
           <Route path="/" element={<TestHomePage />} />
           <Route path="/filters" element={<TestFiltersPage />} />
           <Route path="/login" element={<TestLoginPage />} />
-          <Route path="/register-pet-shop" element={<RegisterPetShopPage />} />
+          <Route path="/register-pet-shop" element={<InlineRegisterPage />} />
         </Routes>
       </main>
     </Router>
