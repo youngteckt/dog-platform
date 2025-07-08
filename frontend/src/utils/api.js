@@ -56,14 +56,19 @@ export const isCacheValid = (cacheData) => {
 export const apiFetch = async (path, options = {}) => {
   const url = `${API_URL}${path}`;
 
-  const defaultHeaders = {
-    'Content-Type': 'application/json',
-    ...options.headers,
-  };
+  // Only add Content-Type header for requests with body (POST, PUT, PATCH)
+  const defaultHeaders = {};
+  if (options.body || (options.method && ['POST', 'PUT', 'PATCH'].includes(options.method.toUpperCase()))) {
+    defaultHeaders['Content-Type'] = 'application/json';
+  }
 
   const config = {
+    method: 'GET', // Default to GET
     ...options,
-    headers: defaultHeaders,
+    headers: {
+      ...defaultHeaders,
+      ...options.headers,
+    },
   };
 
   try {
