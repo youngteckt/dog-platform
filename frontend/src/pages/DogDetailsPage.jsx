@@ -98,33 +98,44 @@ const DogDetailsPage = () => {
             <DetailRow label="Price" value={dog.price ? `$${dog.price.toLocaleString()}` : 'N/A'} />
             <DetailRow label="Age" value={dog.age ? `${dog.age} years` : 'N/A'} />
             <DetailRow label="Gender" value={dog.gender || 'Coming Soon'} />
-            <DetailRow label="ID Code" value={dog.idCode || 'Coming Soon'} />
+            <DetailRow label="ID Code" value={dog.idCode || 'N/A'} />
             <DetailRow label="Vaccinated" value={dog.vaccinated || 'Coming Soon'} />
           </div>
 
-          {/* Shop Details Card */}
+          {/* Pet Shop Details Section */}
           {dog.petShop && (
-            <div className="bg-white rounded-2xl shadow-md p-6">
-              <h2 className="text-2xl font-bold text-gray-800 mb-4">Shop Details</h2>
-              <div className="flex items-center">
-                <img src={dog.petShop.image || '/shop-placeholder.png'} alt={dog.petShop.name} className="w-32 h-32 rounded-full mr-6" />
-                <div>
-                  <p className="text-xl font-bold">{dog.petShop.name}</p>
-                  <p className="text-gray-600">{dog.petShop.location}</p>
-                  <p className="text-gray-600">Email: {dog.petShop.email || 'N/A'}</p>
+            <div className="bg-white p-8 rounded-2xl shadow-lg mt-8">
+              <h3 className="text-xl font-bold text-blue-600 mb-4">Pet Shop Details</h3>
+              <div className="flex flex-col sm:flex-row items-center gap-6">
+                <img 
+                  src={dog.petShop.image || '/shop-placeholder.png'} 
+                  alt={dog.petShop.name} 
+                  className="w-32 h-32 rounded-full object-cover border-4 border-blue-200 flex-shrink-0"
+                />
+                <div className="text-center sm:text-left">
+                  <h4 className="text-lg font-semibold text-gray-800">{dog.petShop.name}</h4>
+                  {dog.petShop.location && <p className="text-gray-600">{dog.petShop.location}</p>}
+                  {dog.petShop.contact && <p className="text-gray-600">Contact: {dog.petShop.contact}</p>}
+                  <a href={`/pet-shop/${dog.petShop._id}`} className="text-blue-600 hover:text-blue-800 transition-colors mt-2 inline-block">
+                    View Pet Shop
+                  </a>
                 </div>
               </div>
-              {dog.contactNumber && (
-                <a
-                  href={`https://wa.me/${dog.contactNumber}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-6 w-full bg-green-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center text-lg"
-                >
-                  <FaWhatsapp className="mr-3" />
-                  Whatsapp Shop
-                </a>
-              )}
+            </div>
+          )}
+
+          {/* WhatsApp Button */}
+          {dog.contactNumber && (
+            <div className="mt-8 text-center">
+              <a
+                href={`https://wa.me/${dog.contactNumber}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full bg-green-500 text-white font-bold py-3 px-4 rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center text-lg"
+              >
+                <FaWhatsapp className="mr-3" />
+                Whatsapp Shop
+              </a>
             </div>
           )}
         </div>
