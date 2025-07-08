@@ -1,12 +1,13 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Header from './components/Header';
+import HomePage from './pages/HomePage';
+import PetShopsPage from './pages/PetShopsPage';
 import RegisterPetShopPage from './pages/RegisterPetShopPage';
-
-// Simple test components for other routes (keep these working)
-const TestHomePage = () => <div style={{padding: '20px', backgroundColor: 'lightgreen'}}>✅ HOME PAGE WORKS</div>;
-const TestFiltersPage = () => <div style={{padding: '20px', backgroundColor: 'lightyellow'}}>✅ FILTERS PAGE WORKS</div>;
-const TestLoginPage = () => <div style={{padding: '20px', backgroundColor: 'lightcoral'}}>✅ LOGIN PAGE WORKS</div>;
+import AllFiltersPage from './pages/AllFiltersPage';
+import LoginPage from './pages/LoginPage';
+import DogDetailsPage from './pages/DogDetailsPage';
+import PetShopDetailsPage from './pages/PetShopDetailsPage';
 
 function App() {
   return (
@@ -23,10 +24,13 @@ function App() {
         zIndex: '1'
       }}>
         <Routes>
-          <Route path="/" element={<TestHomePage />} />
-          <Route path="/filters" element={<TestFiltersPage />} />
-          <Route path="/login" element={<TestLoginPage />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/pet-shops" element={<PetShopsPage />} />
+          <Route path="/filters" element={<AllFiltersPage />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPetShopPage />} />
+          <Route path="/dog/:id" element={<DogDetailsPage />} />
+          <Route path="/pet-shop/:id" element={<PetShopDetailsPage />} />
         </Routes>
       </main>
     </Router>
