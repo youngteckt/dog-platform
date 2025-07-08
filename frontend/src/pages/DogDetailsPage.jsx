@@ -119,7 +119,7 @@ const DogDetailsPage = () => {
                 />
                 <div className="text-sm">
                   <p className="font-bold text-gray-800">{dog.petShop.name}</p>
-                  <p className="text-gray-600 mt-1">{dog.petShop.location}</p>
+                  <p className="text-gray-600 mt-1">Address: {dog.petShop.location}</p>
                   <p className="text-gray-600 mt-1">Phone: {dog.petShop.contact}</p>
                   <p className="text-gray-600 mt-1">Email: {dog.petShop.email || 'N/A'}</p>
                 </div>
