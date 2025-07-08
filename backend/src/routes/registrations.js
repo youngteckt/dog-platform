@@ -43,7 +43,7 @@ router.post('/', async (req, res) => {
       {
         fields: {
           'Pet Shop Name': shopName,
-          'Phone Number': phoneNumber,
+          'Phone number': phoneNumber,
           'Email Address': email,
           'Message': message || '',
           'Status': 'New', // Single select field with options: New, Contacted, Approved
