@@ -14,6 +14,7 @@ const DogDetailsPage = () => {
       setLoading(true);
       try {
         const data = await apiFetch(`/dogs/${id}`);
+        console.log('Dog Details Received:', data); // Add this line
         setDog(data);
         // Set the main image from the 'photos' field, with fallback to 'image'
         if (data.photos && data.photos.length > 0) {
