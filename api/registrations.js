@@ -31,7 +31,9 @@ module.exports = async function handler(req, res) {
     console.log('Request body:', req.body);
     console.log('Environment check:', {
       hasApiKey: !!process.env.AIRTABLE_API_KEY,
-      hasBaseId: !!process.env.AIRTABLE_BASE_ID
+      hasBaseId: !!process.env.AIRTABLE_BASE_ID,
+      apiKeyLength: process.env.AIRTABLE_API_KEY ? process.env.AIRTABLE_API_KEY.length : 0,
+      baseIdLength: process.env.AIRTABLE_BASE_ID ? process.env.AIRTABLE_BASE_ID.length : 0
     });
 
     const { shopName, phoneNumber, email, message } = req.body;
@@ -40,6 +42,18 @@ module.exports = async function handler(req, res) {
     if (!shopName || !phoneNumber || !email) {
       console.log('Validation failed - missing required fields');
       return res.status(400).json({ message: 'Pet Shop Name, Phone Number, and Email are required.' });
+    }
+
+    // Check if environment variables are available
+    if (!process.env.AIRTABLE_API_KEY || !process.env.AIRTABLE_BASE_ID) {
+      console.error('Missing environment variables:', {
+        hasApiKey: !!process.env.AIRTABLE_API_KEY,
+        hasBaseId: !!process.env.AIRTABLE_BASE_ID
+      });
+      return res.status(500).json({ 
+        message: 'Server configuration error. Please contact support.',
+        error: 'Missing environment variables'
+      });
     }
 
     try {
