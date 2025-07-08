@@ -1,19 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Header from './components/Header';
-
-// Simple test components for other routes (keep these working)
-const TestHomePage = () => <div style={{padding: '20px', backgroundColor: 'lightgreen'}}>✅ HOME PAGE WORKS</div>;
-const TestFiltersPage = () => <div style={{padding: '20px', backgroundColor: 'lightyellow'}}>✅ FILTERS PAGE WORKS</div>;
-const TestLoginPage = () => <div style={{padding: '20px', backgroundColor: 'lightcoral'}}>✅ LOGIN PAGE WORKS</div>;
-
-// Test with different path to isolate routing issue
-const InlineRegisterPage = () => (
-  <div style={{padding: '20px', backgroundColor: 'lightblue', fontSize: '24px'}}>
-    🎯 REGISTER TEST WORKS!<br/>
-    Path changed to /register-test
-  </div>
-);
+import RegisterPetShopPage from './pages/RegisterPetShopPage';
+import HomePage from './pages/HomePage';
+import FiltersPage from './pages/FiltersPage';
+import LoginPage from './pages/LoginPage';
 
 function App() {
   return (
@@ -30,11 +21,10 @@ function App() {
         zIndex: '1'
       }}>
         <Routes>
-          <Route path="/" element={<TestHomePage />} />
-          <Route path="/filters" element={<TestFiltersPage />} />
-          <Route path="/login" element={<TestLoginPage />} />
-          <Route path="/register" element={<InlineRegisterPage />} />
-          <Route path="/register-test" element={<InlineRegisterPage />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/filters" element={<FiltersPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPetShopPage />} />
         </Routes>
       </main>
     </Router>
