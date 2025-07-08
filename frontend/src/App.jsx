@@ -33,7 +33,7 @@ function App() {
           <Route path="/" element={<TestHomePage />} />
           <Route path="/filters" element={<TestFiltersPage />} />
           <Route path="/login" element={<TestLoginPage />} />
-          <Route path="/register-pet-shop" element={<InlineRegisterPage />} />
+          <Route path="/register" element={<InlineRegisterPage />} />
           <Route path="/register-test" element={<InlineRegisterPage />} />
         </Routes>
       </main>
