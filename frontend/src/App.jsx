@@ -7,11 +7,11 @@ const TestHomePage = () => <div style={{padding: '20px', backgroundColor: 'light
 const TestFiltersPage = () => <div style={{padding: '20px', backgroundColor: 'lightyellow'}}>✅ FILTERS PAGE WORKS</div>;
 const TestLoginPage = () => <div style={{padding: '20px', backgroundColor: 'lightcoral'}}>✅ LOGIN PAGE WORKS</div>;
 
-// Inline RegisterPetShopPage to bypass import issue
+// Test with different path to isolate routing issue
 const InlineRegisterPage = () => (
   <div style={{padding: '20px', backgroundColor: 'lightblue', fontSize: '24px'}}>
-    🎯 INLINE REGISTER PAGE WORKS!<br/>
-    This bypasses the import entirely.
+    🎯 REGISTER TEST WORKS!<br/>
+    Path changed to /register-test
   </div>
 );
 
@@ -34,6 +34,7 @@ function App() {
           <Route path="/filters" element={<TestFiltersPage />} />
           <Route path="/login" element={<TestLoginPage />} />
           <Route path="/register-pet-shop" element={<InlineRegisterPage />} />
+          <Route path="/register-test" element={<InlineRegisterPage />} />
         </Routes>
       </main>
     </Router>
