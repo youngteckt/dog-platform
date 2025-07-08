@@ -94,6 +94,32 @@ const formatPuppyRecord = (record) => {
   };
 };
 
+// Helper function to format a puppy record and populate its pet shop details
+const populatePetShopForPuppy = async (record) => {
+  let puppy = formatPuppyRecord(record);
+
+  // If the puppy is linked to a pet shop, fetch that pet shop's details
+  if (puppy.petShop) {
+    try {
+      const petShopRecord = await petShopsTable.find(puppy.petShop);
+      const shopImage = petShopRecord.get('Shop Photo');
+      puppy.petShop = {
+        _id: petShopRecord.id,
+        name: petShopRecord.get('Pet Shop Name'),
+        location: petShopRecord.get('Location'),
+        contact: petShopRecord.get('Contact Number'),
+        email: petShopRecord.get('Email'),
+        image: shopImage && shopImage.length > 0 ? shopImage[0].url : null,
+      };
+    } catch (error) {
+      console.error(`Failed to populate pet shop for puppy ${puppy._id}:`, error);
+      // If fetching the pet shop fails, we can nullify it or leave the ID
+      puppy.petShop = null; 
+    }
+  }
+  return puppy;
+};
+
 // GET all available puppies
 router.get('/', async (req, res) => {
   try {
@@ -113,59 +139,16 @@ router.get('/', async (req, res) => {
 // GET a single puppy by its ID
 router.get('/:id', async (req, res) => {
   try {
-    if (isCacheValid()) {
-      const puppy = cache.puppies.find(puppy => puppy._id === req.params.id);
-      if (puppy) {
-        console.log('Returning cached puppy...');
-        res.json(puppy);
-      } else {
-        const record = await puppiesTable.find(req.params.id);
-        if (!record) {
-          return res.status(404).json({ message: 'Puppy not found' });
-        }
-
-        let puppy = formatPuppyRecord(record);
-
-        // If the puppy is linked to a pet shop, fetch that pet shop's details
-        if (puppy.petShop) {
-          const petShopRecord = await petShopsTable.find(puppy.petShop);
-          const shopImage = petShopRecord.get('Shop Photo');
-          puppy.petShop = {
-            _id: petShopRecord.id,
-            name: petShopRecord.get('Pet Shop Name'),
-            location: petShopRecord.get('Location'),
-            contact: petShopRecord.get('Contact Number'),
-            email: petShopRecord.get('Email'),
-            image: shopImage && shopImage.length > 0 ? shopImage[0].url : null,
-          };
-        }
-
-        res.json(puppy);
-      }
-    } else {
-      const record = await puppiesTable.find(req.params.id);
-      if (!record) {
-        return res.status(404).json({ message: 'Puppy not found' });
-      }
-
-      let puppy = formatPuppyRecord(record);
-
-      // If the puppy is linked to a pet shop, fetch that pet shop's details
-      if (puppy.petShop) {
-        const petShopRecord = await petShopsTable.find(puppy.petShop);
-        const shopImage = petShopRecord.get('Shop Photo');
-        puppy.petShop = {
-          _id: petShopRecord.id,
-          name: petShopRecord.get('Pet Shop Name'),
-          location: petShopRecord.get('Location'),
-          contact: petShopRecord.get('Contact Number'),
-          email: petShopRecord.get('Email'),
-          image: shopImage && shopImage.length > 0 ? shopImage[0].url : null,
-        };
-      }
-
-      res.json(puppy);
+    // We should not use the cache for a single puppy detail view 
+    // to ensure we always get the fully populated, latest data.
+    const record = await puppiesTable.find(req.params.id);
+    if (!record) {
+      return res.status(404).json({ message: 'Puppy not found' });
     }
+
+    const puppy = await populatePetShopForPuppy(record);
+
+    res.json(puppy);
   } catch (error) {
     console.error('Error fetching puppy details from Airtable:', error);
     res.status(500).json({ message: 'Error fetching puppy details' });

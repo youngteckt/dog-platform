@@ -124,22 +124,10 @@ const DogDetailsPage = () => {
                   <p className="text-gray-600 mt-1">Email: {dog.petShop.email || 'N/A'}</p>
                 </div>
               </div>
-
-              {dog.contactNumber && (
-                <a
-                  href={`https://wa.me/${dog.contactNumber}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-4 w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center text-md"
-                >
-                  <FaWhatsapp className="mr-2" />
-                  Whatsapp Shop
-                </a>
-              )}
             </div>
           )}
 
-          {/* WhatsApp Button */}
+          {/* Main WhatsApp Button */}
           {dog.contactNumber && (
             <div className="mt-8 text-center">
               <a
