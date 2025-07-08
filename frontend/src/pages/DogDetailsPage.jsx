@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { FaWhatsapp, FaStoreAlt } from 'react-icons/fa';
 import { apiFetch } from '../utils/api';
 
@@ -105,26 +105,28 @@ const DogDetailsPage = () => {
 
           {/* Pet Shop Details Card - Updated to match design */}
           {dog.petShop && (
-            <div className="bg-white rounded-2xl shadow-md p-6 mt-6">
-              <div className="flex items-center mb-4">
-                <FaStoreAlt className="text-blue-600 mr-3 text-2xl" />
-                <h2 className="text-xl font-bold text-gray-800">Shop Details</h2>
-              </div>
+            <Link to={`/pet-shop/${dog.petShop._id}`} className="block hover:shadow-lg transition-shadow duration-300 rounded-2xl">
+              <div className="bg-white rounded-2xl shadow-md p-6 mt-6">
+                <div className="flex items-center mb-4">
+                  <FaStoreAlt className="text-blue-600 mr-3 text-2xl" />
+                  <h2 className="text-xl font-bold text-gray-800">Shop Details</h2>
+                </div>
 
-              <div className="flex items-start gap-4">
-                <img 
-                  src={dog.petShop.image || '/shop-placeholder.png'} 
-                  alt={dog.petShop.name} 
-                  className="w-24 h-24 rounded-lg object-cover flex-shrink-0"
-                />
-                <div className="text-sm">
-                  <p className="font-bold text-gray-800">{dog.petShop.name}</p>
-                  <p className="text-gray-600 mt-1">Address: {dog.petShop.location}</p>
-                  <p className="text-gray-600 mt-1">Phone: {dog.petShop.contact}</p>
-                  <p className="text-gray-600 mt-1">Email: {dog.petShop.email || 'N/A'}</p>
+                <div className="flex items-start gap-4">
+                  <img 
+                    src={dog.petShop.image || '/shop-placeholder.png'} 
+                    alt={dog.petShop.name} 
+                    className="w-24 h-24 rounded-lg object-cover flex-shrink-0"
+                  />
+                  <div className="text-sm">
+                    <p className="font-bold text-gray-800">{dog.petShop.name}</p>
+                    <p className="text-gray-600 mt-1">Address: {dog.petShop.location}</p>
+                    <p className="text-gray-600 mt-1">Phone: {dog.petShop.contact}</p>
+                    <p className="text-gray-600 mt-1">Email: {dog.petShop.email || 'N/A'}</p>
+                  </div>
                 </div>
               </div>
-            </div>
+            </Link>
           )}
 
           {/* Main WhatsApp Button */}
