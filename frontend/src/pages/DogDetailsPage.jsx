@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { FaWhatsapp } from 'react-icons/fa6';
+import { FaWhatsapp, FaStoreAlt } from 'react-icons/fa';
 import { apiFetch } from '../utils/api';
 
 const DogDetailsPage = () => {
@@ -102,25 +102,39 @@ const DogDetailsPage = () => {
             <DetailRow label="Vaccinated" value={dog.vaccinated || 'Coming Soon'} />
           </div>
 
-          {/* Pet Shop Details Section */}
+          {/* Pet Shop Details Card - Updated to match design */}
           {dog.petShop && (
-            <div className="bg-white p-8 rounded-2xl shadow-lg mt-8">
-              <h3 className="text-xl font-bold text-blue-600 mb-4">Pet Shop Details</h3>
-              <div className="flex flex-col sm:flex-row items-center gap-6">
+            <div className="bg-white rounded-2xl shadow-md p-6 mt-6">
+              <div className="flex items-center mb-4">
+                <FaStoreAlt className="text-blue-600 mr-3 text-2xl" />
+                <h2 className="text-xl font-bold text-gray-800">Shop Details</h2>
+              </div>
+
+              <div className="flex items-start gap-4">
                 <img 
                   src={dog.petShop.image || '/shop-placeholder.png'} 
                   alt={dog.petShop.name} 
-                  className="w-32 h-32 rounded-full object-cover border-4 border-blue-200 flex-shrink-0"
+                  className="w-24 h-24 rounded-lg object-cover flex-shrink-0"
                 />
-                <div className="text-center sm:text-left">
-                  <h4 className="text-lg font-semibold text-gray-800">{dog.petShop.name}</h4>
-                  {dog.petShop.location && <p className="text-gray-600">{dog.petShop.location}</p>}
-                  {dog.petShop.contact && <p className="text-gray-600">Contact: {dog.petShop.contact}</p>}
-                  <a href={`/pet-shop/${dog.petShop._id}`} className="text-blue-600 hover:text-blue-800 transition-colors mt-2 inline-block">
-                    View Pet Shop
-                  </a>
+                <div className="text-sm">
+                  <p className="font-bold text-gray-800">{dog.petShop.name}</p>
+                  <p className="text-gray-600 mt-1">{dog.petShop.location}</p>
+                  <p className="text-gray-600 mt-1">Phone: {dog.petShop.contact}</p>
+                  <p className="text-gray-600 mt-1">Email: {dog.petShop.email || 'N/A'}</p>
                 </div>
               </div>
+
+              {dog.contactNumber && (
+                <a
+                  href={`https://wa.me/${dog.contactNumber}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4 w-full bg-blue-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center text-md"
+                >
+                  <FaWhatsapp className="mr-2" />
+                  Whatsapp Shop
+                </a>
+              )}
             </div>
           )}
 
