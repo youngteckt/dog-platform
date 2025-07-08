@@ -13,7 +13,7 @@ const PetShopDetailsPage = () => {
     const fetchPetShopDetails = async () => {
       setLoading(true);
       try {
-        const data = await apiFetch(`/pet-shop/${id}`);
+        const data = await apiFetch(`/pet-shops/${id}`);
         setPetShop(data);
       } catch (err) {
         setError(err.message);
