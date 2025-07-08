@@ -10,15 +10,15 @@ const router = express.Router();
 
 // POST /api/registrations - Handles new pet shop registration inquiries
 router.post('/', async (req, res) => {
-  const { shopName, contactName, email, message } = req.body;
+  const { shopName, contactName, phoneNumber, email, message } = req.body;
 
   // Basic validation
-  if (!shopName || !contactName || !email) {
-    return res.status(400).json({ message: 'Pet Shop Name, Contact Person, and Email are required.' });
+  if (!shopName || !contactName || !phoneNumber || !email) {
+    return res.status(400).json({ message: 'Pet Shop Name, Contact Person, Phone Number, and Email are required.' });
   }
 
   try {
-    console.log('Attempting to create registration record:', { shopName, contactName, email });
+    console.log('Attempting to create registration record:', { shopName, contactName, phoneNumber, email });
     
     // Create a new record in the "Registrations" table in Airtable
     const newRecord = await base('Registrations').create([
@@ -26,6 +26,7 @@ router.post('/', async (req, res) => {
         fields: {
           'Pet Shop Name': shopName,
           'Contact Person': contactName,
+          'Phone Number': phoneNumber,
           'Email Address': email,
           'Message': message || '',
           'Status': 'New', // Single select field with options: New, Contacted, Approved
@@ -58,14 +59,14 @@ router.post('/', async (req, res) => {
     
     if (error.message && error.message.includes('NOT_FOUND')) {
       return res.status(500).json({ 
-        message: 'Registrations table not found in Airtable.',
-        error: 'Table not found'
+        message: 'Airtable base or table not found. Please check configuration.',
+        error: 'Configuration error'
       });
     }
     
     res.status(500).json({ 
       message: 'Failed to submit inquiry. Please try again later.',
-      error: error.message 
+      error: 'Server error'
     });
   }
 });
