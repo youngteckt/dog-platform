@@ -14,6 +14,7 @@ const PetShopDetailsPage = () => {
       setLoading(true);
       try {
         const data = await apiFetch(`/pet-shops/${id}`);
+        console.log('Pet Shop Data Received:', data);
         setPetShop(data);
       } catch (err) {
         setError(err.message);
