@@ -11,7 +11,7 @@ const DogCard = ({ dog }) => {
 
   return (
     <div key={dog._id} className="bg-white border-2 border-gray-200 rounded-2xl overflow-hidden shadow-sm transition-all duration-300 group hover:shadow-[0_0_20px_5px_rgba(203,255,0,0.8)]">
-      <Link to={`/dogs/${dog._id}`}>
+      <Link to={`/dog/${dog._id}`}>
         <div className="p-2 relative">
           {/* Loading placeholder */}
           {!imageLoaded && !imageError && (

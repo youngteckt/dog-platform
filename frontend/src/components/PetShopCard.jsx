@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const PetShopCard = ({ petShop }) => {
   return (
-    <Link to={`/pet-shops/${petShop._id}`} className="block bg-white rounded-xl border border-gray-200 overflow-hidden h-full flex flex-col transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_5px_rgba(203,255,0,0.8)]">
+    <Link to={`/pet-shop/${petShop._id}`} className="block bg-white rounded-xl border border-gray-200 overflow-hidden h-full flex flex-col transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_20px_5px_rgba(203,255,0,0.8)]">
       {petShop.shopPhotoUrl && (
         <img 
           src={petShop.shopPhotoUrl}
