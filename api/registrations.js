@@ -17,12 +17,30 @@ module.exports = async function handler(req, res) {
 
   // Handle GET request (test endpoint)
   if (req.method === 'GET') {
-    return res.json({ 
-      message: 'Registrations API is working!',
-      hasApiKey: !!process.env.AIRTABLE_API_KEY,
-      hasBaseId: !!process.env.AIRTABLE_BASE_ID,
-      timestamp: new Date().toISOString()
-    });
+    try {
+      // Test Airtable connection by trying to read from the table
+      const records = await base('Registrations').select({
+        maxRecords: 1
+      }).firstPage();
+      
+      return res.json({ 
+        message: 'Registrations API is working!',
+        hasApiKey: !!process.env.AIRTABLE_API_KEY,
+        hasBaseId: !!process.env.AIRTABLE_BASE_ID,
+        canReadTable: true,
+        recordCount: records.length,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      return res.json({ 
+        message: 'Registrations API is working but Airtable connection failed!',
+        hasApiKey: !!process.env.AIRTABLE_API_KEY,
+        hasBaseId: !!process.env.AIRTABLE_BASE_ID,
+        canReadTable: false,
+        error: error.message,
+        timestamp: new Date().toISOString()
+      });
+    }
   }
 
   // Handle POST request (registration submission)
@@ -57,6 +75,10 @@ module.exports = async function handler(req, res) {
     }
 
     try {
+      // Verify Airtable connection and table structure before creating a record
+      const tableSchema = await base('Registrations').schema;
+      console.log('Airtable table schema:', tableSchema);
+
       console.log('Attempting to create registration record:', { shopName, phoneNumber, email });
       
       // Create a new record in the "Registrations" table in Airtable
