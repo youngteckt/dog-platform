@@ -1,9 +1,9 @@
-import Airtable from 'airtable';
+const Airtable = require('airtable');
 
 // Configure Airtable connection
 const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_ID);
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -99,4 +99,4 @@ export default async function handler(req, res) {
   // Method not allowed
   res.setHeader('Allow', ['GET', 'POST', 'OPTIONS']);
   res.status(405).json({ message: 'Method not allowed' });
-}
+};
