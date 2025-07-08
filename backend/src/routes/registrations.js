@@ -27,23 +27,22 @@ router.post('/', async (req, res) => {
     hasBaseId: !!process.env.AIRTABLE_BASE_ID
   });
 
-  const { shopName, contactName, phoneNumber, email, message } = req.body;
+  const { shopName, phoneNumber, email, message } = req.body;
 
   // Basic validation
-  if (!shopName || !contactName || !phoneNumber || !email) {
+  if (!shopName || !phoneNumber || !email) {
     console.log('Validation failed - missing required fields');
-    return res.status(400).json({ message: 'Pet Shop Name, Contact Person, Phone Number, and Email are required.' });
+    return res.status(400).json({ message: 'Pet Shop Name, Phone Number, and Email are required.' });
   }
 
   try {
-    console.log('Attempting to create registration record:', { shopName, contactName, phoneNumber, email });
+    console.log('Attempting to create registration record:', { shopName, phoneNumber, email });
     
     // Create a new record in the "Registrations" table in Airtable
     const newRecord = await base('Registrations').create([
       {
         fields: {
           'Pet Shop Name': shopName,
-          'Contact Person': contactName,
           'Phone Number': phoneNumber,
           'Email Address': email,
           'Message': message || '',

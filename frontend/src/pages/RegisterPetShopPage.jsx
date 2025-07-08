@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 const RegisterPetShopPage = () => {
   const [formData, setFormData] = useState({
     shopName: '',
-    contactName: '',
     phoneNumber: '',
     email: '',
     message: ''
@@ -41,7 +40,7 @@ const RegisterPetShopPage = () => {
         const result = await response.json();
         console.log('Success response:', result);
         setSubmitStatus('success');
-        setFormData({ shopName: '', contactName: '', phoneNumber: '', email: '', message: '' });
+        setFormData({ shopName: '', phoneNumber: '', email: '', message: '' });
       } else {
         const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
         console.error('Error response:', errorData);
@@ -91,22 +90,6 @@ const RegisterPetShopPage = () => {
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 placeholder="Enter your pet shop name"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="contactName" className="block text-sm font-medium text-gray-700 mb-2">
-                Contact Person Name *
-              </label>
-              <input
-                type="text"
-                id="contactName"
-                name="contactName"
-                value={formData.contactName}
-                onChange={handleChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                placeholder="Enter contact person name"
               />
             </div>
 
