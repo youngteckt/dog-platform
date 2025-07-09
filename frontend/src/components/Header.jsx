@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AiOutlineMenu, AiOutlineClose } from 'react-icons/ai';
-import { FaSearch, FaUserPlus, FaSignInAlt } from 'react-icons/fa';
+import { FaSearch, FaUserPlus, FaSignInAlt, FaHome } from 'react-icons/fa';
 import logo from '../assets/logo.png'; // Import the logo
 import SideMenu from './SideMenu'; // Import the new side menu
 
@@ -50,6 +50,10 @@ const Header = () => {
             </button>
           </div>
           <div className="p-5 pt-20">
+            <Link to="/" className="flex items-center text-white py-3 hover:text-yellow-300 transition-colors" onClick={() => setIsMenuOpen(false)}>
+              <FaHome className="mr-3" />
+              Home
+            </Link>
             <Link to="/pet-shops" className="flex items-center text-white py-3 hover:text-yellow-300 transition-colors" onClick={() => setIsMenuOpen(false)}>
               <FaSearch className="mr-3" />
               Discover Pet Shops
