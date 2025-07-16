@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import apiFetch from '../api/ApiFetch';
+import { apiFetch } from '../utils/api';
 import DogCard from '../components/DogCard';
 import FilterModal from '../components/FilterModal';
 import PriceFilterModal from '../components/PriceFilterModal';
