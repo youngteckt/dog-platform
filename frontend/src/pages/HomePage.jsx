@@ -26,51 +26,12 @@ const HomePage = () => {
   const [selectedPetShops, setSelectedPetShops] = useState([]);
   const [selectedPriceRanges, setSelectedPriceRanges] = useState([]);
 
-  // Cache configuration
-  const CACHE_KEY = 'dogs_cache';
-  const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
-
-  // Helper function to check if localStorage cache is valid
-  const isCacheValid = (cacheData) => {
-    return cacheData && cacheData.timestamp && (Date.now() - cacheData.timestamp) < CACHE_TTL;
-  };
-
-  // Helper function to get cached data
-  const getCachedData = () => {
-    try {
-      const cached = localStorage.getItem(CACHE_KEY);
-      return cached ? JSON.parse(cached) : null;
-    } catch (error) {
-      console.error('Error reading cache:', error);
-      return null;
-    }
-  };
-
-  // Helper function to set cached data
-  const setCachedData = (data) => {
-    try {
-      const cacheData = {
-        data: data,
-        timestamp: Date.now()
-      };
-      localStorage.setItem(CACHE_KEY, JSON.stringify(cacheData));
-    } catch (error) {
-      console.error('Error setting cache:', error);
-    }
-  };
-
   useEffect(() => {
     const fetchDogs = async () => {
       try {
         setLoading(true);
-        const cachedData = getCachedData();
-        if (isCacheValid(cachedData)) {
-          setDogs(cachedData.data);
-        } else {
-          const data = await apiFetch('/dogs');
-          setDogs(data);
-          setCachedData(data);
-        }
+        const data = await apiFetch('/dogs');
+        setDogs(data);
       } catch (error) {
         console.error('Failed to fetch dogs:', error);
       } finally {
@@ -90,12 +51,12 @@ const HomePage = () => {
   }, [location.state]);
 
   const uniqueBreeds = [...new Set(dogs.map(dog => dog.breed))];
-  const uniquePetShops = [...new Set(dogs.map(dog => dog.petShopName).filter(Boolean))];
+  const uniquePetShops = [...new Set(dogs.map(dog => dog.petShop?.name).filter(Boolean))];
 
   const filteredDogs = dogs.filter(dog => {
     const searchMatch = searchTerm
       ? dog.breed.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (dog.petShopName && dog.petShopName.toLowerCase().includes(searchTerm.toLowerCase()))
+        (dog.petShop?.name && dog.petShop.name.toLowerCase().includes(searchTerm.toLowerCase()))
       : true;
 
     const breedMatch = selectedBreeds.length > 0
@@ -103,7 +64,7 @@ const HomePage = () => {
       : true;
 
     const petShopMatch = selectedPetShops.length > 0
-      ? selectedPetShops.includes(dog.petShopName)
+      ? selectedPetShops.includes(dog.petShop?.name)
       : true;
 
     const priceMatch = selectedPriceRanges.length === 0 ? true : selectedPriceRanges.some(range => {
