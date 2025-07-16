@@ -41,11 +41,13 @@ const HomePage = () => {
     fetchDogs();
   }, []);
 
+  // This is the single source of truth for updating the displayed dogs.
+  // It runs when the main dog list is fetched, or when filters are changed.
   useEffect(() => {
-    const DOGS_PER_PAGE = 20; 
+    const DOGS_PER_PAGE = 20;
     setDisplayedDogs(filteredDogs.slice(0, DOGS_PER_PAGE));
     setOffset(DOGS_PER_PAGE);
-  }, [filteredDogs]); 
+  }, [filteredDogs]);
 
   // Listen for state changes from the AllFiltersPage
   useEffect(() => {
@@ -120,13 +122,10 @@ const HomePage = () => {
   };
 
   const handleLoadMore = () => {
-    setLoadingMore(true);
     const newOffset = offset + ITEMS_PER_PAGE;
     const newDogs = filteredDogs.slice(offset, newOffset);
-    // Use a callback to ensure we're updating based on the latest state
     setDisplayedDogs(prevDogs => [...prevDogs, ...newDogs]);
     setOffset(newOffset);
-    setLoadingMore(false);
   };
 
   // Calculate active filter count
@@ -210,20 +209,9 @@ const HomePage = () => {
         <div className="flex justify-center mt-8">
           <button 
             onClick={handleLoadMore}
-            disabled={loadingMore}
-            className="bg-blue-600 text-white font-semibold py-3 px-8 rounded-full hover:bg-blue-700 active:bg-blue-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+            className="bg-blue-600 text-white font-semibold py-3 px-8 rounded-full hover:bg-blue-700 active:bg-blue-800 transition-colors"
           >
-            {loadingMore ? (
-              <>
-                <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <span>Loading...</span>
-              </>
-            ) : (
-              <span>Load More Puppies</span>
-            )}
+            Load More Puppies
           </button>
         </div>
       )}
