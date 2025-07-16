@@ -42,10 +42,10 @@ const HomePage = () => {
   }, []);
 
   useEffect(() => {
-    const DOGS_PER_PAGE = 20;
+    const DOGS_PER_PAGE = 20; 
     setDisplayedDogs(filteredDogs.slice(0, DOGS_PER_PAGE));
     setOffset(DOGS_PER_PAGE);
-  }, [filteredDogs]);
+  }, [filteredDogs]); 
 
   // Listen for state changes from the AllFiltersPage
   useEffect(() => {
@@ -119,13 +119,18 @@ const HomePage = () => {
     });
   };
 
-  const activeFilterCount = selectedBreeds.length + selectedPetShops.length + selectedPriceRanges.length;
-
   const handleLoadMore = () => {
     setLoadingMore(true);
-    setOffset(offset + ITEMS_PER_PAGE);
+    const newOffset = offset + ITEMS_PER_PAGE;
+    const newDogs = filteredDogs.slice(offset, newOffset);
+    // Use a callback to ensure we're updating based on the latest state
+    setDisplayedDogs(prevDogs => [...prevDogs, ...newDogs]);
+    setOffset(newOffset);
     setLoadingMore(false);
   };
+
+  // Calculate active filter count
+  const activeFilterCount = selectedBreeds.length + selectedPetShops.length + selectedPriceRanges.length;
 
   return (
     <div>
