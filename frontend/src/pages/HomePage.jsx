@@ -41,6 +41,12 @@ const HomePage = () => {
     fetchDogs();
   }, []);
 
+  useEffect(() => {
+    const DOGS_PER_PAGE = 20;
+    setDisplayedDogs(filteredDogs.slice(0, DOGS_PER_PAGE));
+    setOffset(DOGS_PER_PAGE);
+  }, [filteredDogs]);
+
   // Listen for state changes from the AllFiltersPage
   useEffect(() => {
     if (location.state) {
@@ -88,14 +94,6 @@ const HomePage = () => {
   // Pagination configuration
   const ITEMS_PER_PAGE = 20;
   const hasMoreItems = filteredDogs.length > displayedDogs.length;
-
-  useEffect(() => {
-    const loadDogs = () => {
-      const end = offset + ITEMS_PER_PAGE;
-      setDisplayedDogs(filteredDogs.slice(0, end));
-    };
-    loadDogs();
-  }, [filteredDogs, offset]);
 
   const handleClearFilters = () => {
     setSearchTerm('');
