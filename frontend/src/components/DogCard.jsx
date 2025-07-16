@@ -5,9 +5,15 @@ const DogCard = ({ dog }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
 
-  if (!dog) {
+  if (!dog || !dog.image) {
     return null;
   }
+
+  // --- Image Optimization with Cloudinary ---
+  const cloudName = 'ddkyuhxmd';
+  // Transformations: f_auto (auto format), q_auto (auto quality), w_400 (width 400px), c_limit (don't scale up)
+  const transformations = 'f_auto,q_auto,w_400,c_limit';
+  const optimizedImageUrl = `https://res.cloudinary.com/${cloudName}/image/fetch/${transformations}/${encodeURIComponent(dog.image)}`;
 
   return (
     <div key={dog._id} className="bg-white border-2 border-gray-200 rounded-2xl overflow-hidden shadow-sm transition-all duration-300 group hover:shadow-[0_0_20px_5px_rgba(203,255,0,0.8)]">
@@ -37,7 +43,7 @@ const DogCard = ({ dog }) => {
           
           {/* Actual image */}
           <img
-            src={dog.image}
+            src={optimizedImageUrl}
             alt={dog.name}
             loading="lazy"
             className={`w-full h-48 object-contain rounded-xl group-hover:opacity-80 transition-opacity ${
