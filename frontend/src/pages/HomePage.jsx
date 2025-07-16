@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import DogCard from '../components/DogCard';
 import FilterModal from '../components/FilterModal';
@@ -41,14 +41,6 @@ const HomePage = () => {
     fetchDogs();
   }, []);
 
-  // This is the single source of truth for updating the displayed dogs.
-  // It runs when the main dog list is fetched, or when filters are changed.
-  useEffect(() => {
-    const DOGS_PER_PAGE = 20;
-    setDisplayedDogs(filteredDogs.slice(0, DOGS_PER_PAGE));
-    setOffset(DOGS_PER_PAGE);
-  }, [filteredDogs]);
-
   // Listen for state changes from the AllFiltersPage
   useEffect(() => {
     if (location.state) {
@@ -58,42 +50,50 @@ const HomePage = () => {
     }
   }, [location.state]);
 
-  const uniqueBreeds = [...new Set(dogs.map(dog => dog.breed))];
-  const uniquePetShops = [...new Set(dogs.map(dog => dog.petShop?.name).filter(Boolean))];
+  const uniqueBreeds = useMemo(() => [...new Set(dogs.map(dog => dog.breed))], [dogs]);
+  const uniquePetShops = useMemo(() => [...new Set(dogs.map(dog => dog.petShop?.name).filter(Boolean))], [dogs]);
 
-  const filteredDogs = dogs.filter(dog => {
-    const searchMatch = searchTerm
-      ? dog.breed.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (dog.petShop?.name && dog.petShop.name.toLowerCase().includes(searchTerm.toLowerCase()))
-      : true;
+  const filteredDogs = useMemo(() => {
+    return dogs.filter(dog => {
+      const searchMatch = searchTerm
+        ? dog.breed.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (dog.petShop?.name && dog.petShop.name.toLowerCase().includes(searchTerm.toLowerCase()))
+        : true;
 
-    const breedMatch = selectedBreeds.length > 0
-      ? selectedBreeds.includes(dog.breed)
-      : true;
+      const breedMatch = selectedBreeds.length > 0
+        ? selectedBreeds.includes(dog.breed)
+        : true;
 
-    const petShopMatch = selectedPetShops.length > 0
-      ? selectedPetShops.includes(dog.petShop?.name)
-      : true;
+      const petShopMatch = selectedPetShops.length > 0
+        ? selectedPetShops.includes(dog.petShop?.name)
+        : true;
 
-    const priceMatch = selectedPriceRanges.length === 0 ? true : selectedPriceRanges.some(range => {
-      switch (range) {
-        case '$1000 - $1999':
-          return dog.price >= 1000 && dog.price <= 1999;
-        case '$2000 - $2999':
-          return dog.price >= 2000 && dog.price <= 2999;
-        case '$3000 - $3999':
-          return dog.price >= 3000 && dog.price <= 3999;
-        case '$4000 and above':
-          return dog.price >= 4000;
-        default:
-          return false;
-      }
+      const priceMatch = selectedPriceRanges.length === 0 ? true : selectedPriceRanges.some(range => {
+        switch (range) {
+          case '$1000 - $1999':
+            return dog.price >= 1000 && dog.price <= 1999;
+          case '$2000 - $2999':
+            return dog.price >= 2000 && dog.price <= 2999;
+          case '$3000 - $3999':
+            return dog.price >= 3000 && dog.price <= 3999;
+          case '$4000 and above':
+            return dog.price >= 4000;
+          default:
+            return false;
+        }
+      });
+
+      return searchMatch && breedMatch && petShopMatch && priceMatch;
     });
+  }, [dogs, searchTerm, selectedBreeds, selectedPetShops, selectedPriceRanges]);
 
-    return searchMatch && breedMatch && petShopMatch && priceMatch;
-  });
+  // This useEffect now ONLY runs when the filtered list is recalculated.
+  useEffect(() => {
+    const DOGS_PER_PAGE = 20;
+    setDisplayedDogs(filteredDogs.slice(0, DOGS_PER_PAGE));
+    setOffset(DOGS_PER_PAGE);
+  }, [filteredDogs]);
 
-  // Pagination configuration
   const ITEMS_PER_PAGE = 20;
   const hasMoreItems = filteredDogs.length > displayedDogs.length;
 
