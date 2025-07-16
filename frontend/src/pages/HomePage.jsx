@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import apiFetch from '../api/ApiFetch';
 import DogCard from '../components/DogCard';
 import FilterModal from '../components/FilterModal';
 import PriceFilterModal from '../components/PriceFilterModal';
-import { apiFetch } from '../utils/api';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -11,11 +11,9 @@ const HomePage = () => {
 
   const [dogs, setDogs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [displayedDogs, setDisplayedDogs] = useState([]);
-  const [offset, setOffset] = useState(0);
-  
+  const [displayCount, setDisplayCount] = useState(20); // Start by showing 20 items
+
   // State for individual modals
   const [isBreedModalOpen, setIsBreedModalOpen] = useState(false);
   const [isPetShopModalOpen, setIsPetShopModalOpen] = useState(false);
@@ -40,6 +38,11 @@ const HomePage = () => {
     };
     fetchDogs();
   }, []);
+
+  // When filters change, reset the number of displayed dogs
+  useEffect(() => {
+    setDisplayCount(20);
+  }, [searchTerm, selectedBreeds, selectedPetShops, selectedPriceRanges]);
 
   // Listen for state changes from the AllFiltersPage
   useEffect(() => {
@@ -87,15 +90,8 @@ const HomePage = () => {
     });
   }, [dogs, searchTerm, selectedBreeds, selectedPetShops, selectedPriceRanges]);
 
-  // This useEffect now ONLY runs when the filtered list is recalculated.
-  useEffect(() => {
-    const DOGS_PER_PAGE = 20;
-    setDisplayedDogs(filteredDogs.slice(0, DOGS_PER_PAGE));
-    setOffset(DOGS_PER_PAGE);
-  }, [filteredDogs]);
-
-  const ITEMS_PER_PAGE = 20;
-  const hasMoreItems = filteredDogs.length > displayedDogs.length;
+  const displayedDogs = filteredDogs.slice(0, displayCount);
+  const hasMoreItems = filteredDogs.length > displayCount;
 
   const handleClearFilters = () => {
     setSearchTerm('');
@@ -122,10 +118,7 @@ const HomePage = () => {
   };
 
   const handleLoadMore = () => {
-    const newOffset = offset + ITEMS_PER_PAGE;
-    const newDogs = filteredDogs.slice(offset, newOffset);
-    setDisplayedDogs(prevDogs => [...prevDogs, ...newDogs]);
-    setOffset(newOffset);
+    setDisplayCount(prevCount => prevCount + 20);
   };
 
   // Calculate active filter count
