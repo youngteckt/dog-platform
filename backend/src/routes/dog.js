@@ -85,12 +85,13 @@ const formatPuppyRecord = (record) => {
   const sanitizedContact = rawContact ? String(rawContact).replace(/\D/g, '') : null;
 
   // Construct permanent, optimized Cloudinary image URLs
-  const imageUrls = photos.map(photo => {
-    const cloudName = 'ddkyuhxmd';
-    // Transformations: f_auto (auto format), q_auto (auto quality), w_400 (width 400px), c_limit (don't scale up)
-    const transformations = 'f_auto,q_auto,w_400,c_limit';
-    return `https://res.cloudinary.com/${cloudName}/image/fetch/${transformations}/${encodeURIComponent(photo.url)}`;
-  });
+  const cloudName = 'ddkyuhxmd';
+  const transformations = 'f_auto,q_auto,w_400,c_limit';
+  const optimizedImageUrls = photos
+    .filter(photo => photo && photo.url)
+    .map(photo => 
+    `https://res.cloudinary.com/${cloudName}/image/fetch/${transformations}/${encodeURIComponent(photo.url)}`
+  );
 
   return {
     _id: record.id, // Use Airtable record ID as the unique ID
@@ -102,9 +103,9 @@ const formatPuppyRecord = (record) => {
     vaccinated: record.get('Vaccinated'),
     idCode: record.get('Puppy ID'), // Add Puppy ID field
     // The frontend expects a single image URL, so we'll take the first one for list views
-    image: imageUrls.length > 0 ? imageUrls[0] : null,
+    image: optimizedImageUrls.length > 0 ? optimizedImageUrls[0] : null,
     // Add the full photos array for the detail page gallery
-    photos: imageUrls || [],
+    photos: optimizedImageUrls || [],
     // The frontend expects the description field from the old schema
     description: record.get('Background of puppy') || `A lovely ${record.get('Breed')}`,
     petShop: record.get('Pet Shop') ? record.get('Pet Shop')[0] : null,
