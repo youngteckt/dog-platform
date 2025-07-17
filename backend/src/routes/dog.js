@@ -23,7 +23,9 @@ const getPuppies = async () => {
   try {
     // Fetch all puppies and pet shops in parallel
     const [puppyRecords, petShopRecords] = await Promise.all([
-      base('Puppies').select({ view: 'Grid view' }).all(),
+      base('Puppies').select({ 
+        filterByFormula: 'Available = TRUE()'
+      }).all(),
       base('Pet Shops').select({ view: 'Grid view' }).all()
     ]);
 
@@ -32,12 +34,6 @@ const getPuppies = async () => {
     petShopRecords.forEach(record => {
       petShopMap.set(record.id, formatPetShopRecord(record));
     });
-
-    // --- DEBUG: Log the first puppy record to inspect its structure ---
-    if (puppyRecords && puppyRecords.length > 0) {
-      console.log('Inspecting the first raw puppy record from Airtable:', JSON.stringify(puppyRecords[0], null, 2));
-    }
-    // --- END DEBUG ---
 
     // Format puppies and link pet shops
     const puppies = puppyRecords.map(record => {
