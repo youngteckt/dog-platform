@@ -75,7 +75,7 @@ const fetchAndCacheData = async () => {
 
 // Helper function to format an Airtable record into the JSON our frontend expects
 const formatPuppyRecord = (record) => {
-  const photos = record.get('Photos');
+  const photos = record.get('Photos') || []; // Ensure 'photos' is always an array.
   // Safely parse the price string into a number
   const priceString = String(record.get('Price') || '0');
   const priceNumber = Number(priceString.replace(/[^0-9.]+/g, ''));
