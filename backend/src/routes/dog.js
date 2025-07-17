@@ -1,5 +1,5 @@
 import { Router } from 'express';
-const Airtable = require('airtable');
+import Airtable from 'airtable';
 
 const router = Router();
 
