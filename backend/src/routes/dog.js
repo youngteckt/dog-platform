@@ -24,7 +24,11 @@ const getPuppies = async () => {
     // Fetch all puppies and pet shops in parallel
     const [puppyRecords, petShopRecords] = await Promise.all([
       base('Puppies').select({ 
-        filterByFormula: 'Available = TRUE()'
+        filterByFormula: 'Available = TRUE()',
+        fields: [
+          'Name', 'Breed', 'Price', 'Date of Birth', 'Available', 'Photos', 
+          'Gender', 'Vaccinated', 'Age of puppy', 'Background of puppy', 'Pet Shop', 'Puppy ID'
+        ]
       }).all(),
       base('Pet Shops').select({ view: 'Grid view' }).all()
     ]);
