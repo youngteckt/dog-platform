@@ -33,6 +33,12 @@ const getPuppies = async () => {
       petShopMap.set(record.id, formatPetShopRecord(record));
     });
 
+    // --- DEBUG: Log the first puppy record to inspect its structure ---
+    if (puppyRecords && puppyRecords.length > 0) {
+      console.log('Inspecting the first raw puppy record from Airtable:', JSON.stringify(puppyRecords[0], null, 2));
+    }
+    // --- END DEBUG ---
+
     // Format puppies and link pet shops
     const puppies = puppyRecords.map(record => {
       const puppy = formatPuppyRecord(record);
