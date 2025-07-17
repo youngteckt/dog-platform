@@ -61,14 +61,20 @@ const getPuppies = async () => {
 
 // Helper function to format an Airtable record into the JSON our frontend expects
 const formatPuppyRecord = (record) => {
-  const photos = record.get('Photos') || []; // Ensure 'photos' is always an array.
+  // --- AGGRESSIVE DEBUGGING ---
+  console.log(`[DEBUG] Processing puppy ID: ${record.id}`);
+  const rawPhotos = record.get('Photos');
+  console.log(`[DEBUG] Raw 'Photos' field for ${record.id}:`, JSON.stringify(rawPhotos, null, 2));
+  // --- END DEBUG ---
+
+  const photos = rawPhotos || []; // Ensure 'photos' is always an array.
   // Safely parse the price string into a number
   const priceString = String(record.get('Price') || '0');
   const priceNumber = Number(priceString.replace(/[^0-9.]+/g, ''));
 
   // Fetch and sanitize the contact number
   const rawContact = record.get('Contact Number (For Pet Shop)');
-  const sanitizedContact = rawContact ? String(rawContact).replace(/\D/g, '') : null;
+  const sanitizedContact = (rawContact || [''])[0];
 
   // Construct permanent, optimized Cloudinary image URLs
   const cloudName = 'ddkyuhxmd';
@@ -78,6 +84,10 @@ const formatPuppyRecord = (record) => {
     .map(photo => 
     `https://res.cloudinary.com/${cloudName}/image/fetch/${transformations}/${encodeURIComponent(photo.url)}`
   );
+
+  // --- AGGRESSIVE DEBUGGING ---
+  console.log(`[DEBUG] Optimized URLs for ${record.id}:`, JSON.stringify(optimizedImageUrls, null, 2));
+  // --- END DEBUG ---
 
   return {
     _id: record.id, // Use Airtable record ID as the unique ID
