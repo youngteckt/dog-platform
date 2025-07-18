@@ -17,27 +17,25 @@ const formatPetShopRecord = (record) => ({
 
 // Helper function to format a puppy record
 const formatPuppyRecord = (record) => {
-  const cloudinaryUrl = record.get('CloudinaryURL');
+  // The 'CloudinaryPhotos' field will store an array of permanent URLs
+  const photoUrls = record.get('CloudinaryPhotos') || [];
+  const transformations = 'f_auto,q_auto,w_400,c_limit';
 
-  let primaryImage = null;
-  // Check if a permanent Cloudinary URL exists
-  if (cloudinaryUrl) {
-    // Apply standard transformations for optimization and consistent sizing
-    const transformations = 'f_auto,q_auto,w_400,c_limit';
-    // Insert transformations into the Cloudinary URL
-    const urlParts = cloudinaryUrl.split('/upload/');
+  const transformedUrls = photoUrls.map(url => {
+    const urlParts = url.split('/upload/');
     if (urlParts.length === 2) {
-      primaryImage = `${urlParts[0]}/upload/${transformations}/${urlParts[1]}`;
+      return `${urlParts[0]}/upload/${transformations}/${urlParts[1]}`;
     }
-  }
+    return url; // Return original URL if transformation fails
+  });
 
   return {
     _id: record.id,
     name: record.get('Name'),
-    // Use the new permanent & transformed URL. Fallback to null if it doesn't exist.
-    image: primaryImage,
-    // The 'photos' array can also use the permanent URL.
-    photos: primaryImage ? [primaryImage] : [],
+    // The primary image is the first one in the array
+    image: transformedUrls.length > 0 ? transformedUrls[0] : null,
+    // The photos array contains all images for the gallery
+    photos: transformedUrls,
     breed: record.get('Breed'),
     price: Number(String(record.get('Price') || '0').replace(/[^0-9.]+/g, '')),
     dob: record.get('Date of Birth'),
@@ -58,7 +56,7 @@ router.get('/', async (req, res) => {
       base('Puppies').select({
         filterByFormula: 'Available = TRUE()',
         fields: [
-          'Name', 'Breed', 'Price', 'Date of Birth', 'Available', 'CloudinaryURL', 
+          'Name', 'Breed', 'Price', 'Date of Birth', 'Available', 'CloudinaryPhotos', 
           'Gender', 'Vaccinated', 'Age of puppy', 'Background of puppy', 'Pet Shop', 'Puppy ID'
         ]
       }).all(),
@@ -94,42 +92,24 @@ router.get('/', async (req, res) => {
 // Route to get a single puppy by ID
 router.get('/:id', async (req, res) => {
   try {
-    // 1. Fetch all puppies and pet shops in parallel
-    const [puppyRecords, petShopRecords] = await Promise.all([
-      base('Puppies').select({
-        filterByFormula: 'Available = TRUE()',
-        fields: [
-          'Name', 'Breed', 'Price', 'Date of Birth', 'Available', 'CloudinaryURL', 
-          'Gender', 'Vaccinated', 'Age of puppy', 'Background of puppy', 'Pet Shop', 'Puppy ID'
-        ]
-      }).all(),
-      base('Pet Shops').select({ view: 'Grid view' }).all()
-    ]);
-
-    // 2. Create a map of pet shops for easy lookup
-    const petShopMap = new Map();
-    petShopRecords.forEach(record => {
-      petShopMap.set(record.id, formatPetShopRecord(record));
-    });
-
-    // 3. Format puppies and link their pet shops
-    const puppies = puppyRecords.map(record => {
-      const puppy = formatPuppyRecord(record);
-      const petShopId = record.get('Pet Shop')?.[0];
-      if (petShopId && petShopMap.has(petShopId)) {
-        puppy.petShop = petShopMap.get(petShopId);
-      }
-      return puppy;
-    });
-
-    const puppy = puppies.find(p => p._id === req.params.id);
-    if (puppy) {
-      res.json(puppy);
-    } else {
-      res.status(404).json({ message: 'Puppy not found' });
+    const puppyRecord = await base('Puppies').find(req.params.id);
+    if (!puppyRecord) {
+      return res.status(404).json({ message: 'Puppy not found' });
     }
+
+    let puppy = formatPuppyRecord(puppyRecord);
+
+    // Fetch pet shop details if linked
+    const petShopId = puppyRecord.get('Pet Shop')?.[0];
+    if (petShopId) {
+      const petShopRecord = await base('Pet Shops').find(petShopId);
+      puppy.petShop = formatPetShopRecord(petShopRecord);
+    }
+
+    res.json(puppy);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching puppy', error: error.message });
+    console.error('Error fetching single dog:', error);
+    res.status(500).json({ message: 'Error fetching data' });
   }
 });
 
