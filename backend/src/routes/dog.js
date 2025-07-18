@@ -96,9 +96,10 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Route to get a single puppy by ID
+// Endpoint to get a single puppy by its ID for the DETAIL PAGE
 router.get('/:id', async (req, res) => {
   try {
+    // 1. Find the specific puppy record.
     const puppyRecord = await base('Puppies').find(req.params.id);
     if (!puppyRecord) {
       return res.status(404).json({ message: 'Puppy not found' });
