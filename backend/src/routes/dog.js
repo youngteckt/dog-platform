@@ -17,20 +17,27 @@ const formatPetShopRecord = (record) => ({
 
 // Helper function to format a puppy record
 const formatPuppyRecord = (record) => {
-  const photos = record.get('Photos') || [];
-  const cloudName = 'ddkyuhxmd';
-  const transformations = 'f_auto,q_auto,w_400,c_limit';
-  const optimizedImageUrls = photos
-    .filter(photo => photo && photo.url)
-    .map(photo => 
-      `https://res.cloudinary.com/${cloudName}/image/fetch/${transformations}/${encodeURIComponent(photo.url)}`
-    );
+  const cloudinaryUrl = record.get('CloudinaryURL');
+
+  let primaryImage = null;
+  // Check if a permanent Cloudinary URL exists
+  if (cloudinaryUrl) {
+    // Apply standard transformations for optimization and consistent sizing
+    const transformations = 'f_auto,q_auto,w_400,c_limit';
+    // Insert transformations into the Cloudinary URL
+    const urlParts = cloudinaryUrl.split('/upload/');
+    if (urlParts.length === 2) {
+      primaryImage = `${urlParts[0]}/upload/${transformations}/${urlParts[1]}`;
+    }
+  }
 
   return {
     _id: record.id,
     name: record.get('Name'),
-    image: optimizedImageUrls.length > 0 ? optimizedImageUrls[0] : null,
-    photos: optimizedImageUrls,
+    // Use the new permanent & transformed URL. Fallback to null if it doesn't exist.
+    image: primaryImage,
+    // The 'photos' array can also use the permanent URL.
+    photos: primaryImage ? [primaryImage] : [],
     breed: record.get('Breed'),
     price: Number(String(record.get('Price') || '0').replace(/[^0-9.]+/g, '')),
     dob: record.get('Date of Birth'),
@@ -51,7 +58,7 @@ router.get('/', async (req, res) => {
       base('Puppies').select({
         filterByFormula: 'Available = TRUE()',
         fields: [
-          'Name', 'Breed', 'Price', 'Date of Birth', 'Available', 'Photos', 
+          'Name', 'Breed', 'Price', 'Date of Birth', 'Available', 'CloudinaryURL', 
           'Gender', 'Vaccinated', 'Age of puppy', 'Background of puppy', 'Pet Shop', 'Puppy ID'
         ]
       }).all(),
@@ -92,7 +99,7 @@ router.get('/:id', async (req, res) => {
       base('Puppies').select({
         filterByFormula: 'Available = TRUE()',
         fields: [
-          'Name', 'Breed', 'Price', 'Date of Birth', 'Available', 'Photos', 
+          'Name', 'Breed', 'Price', 'Date of Birth', 'Available', 'CloudinaryURL', 
           'Gender', 'Vaccinated', 'Age of puppy', 'Background of puppy', 'Pet Shop', 'Puppy ID'
         ]
       }).all(),
