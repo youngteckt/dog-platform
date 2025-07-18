@@ -21,7 +21,7 @@ const DogCard = ({ dog }) => {
         <div className="p-4 pt-2">
           <h2 className="text-lg font-bold text-gray-800 truncate" title={dog.name}>{dog.name}</h2>
           <p className="text-sm text-gray-600 truncate">{dog.breed}</p>
-          <p className="text-base font-medium text-gray-900 mt-2">${dog.price.toLocaleString()}</p>
+          <p className="text-base font-medium text-gray-900 mt-2">${(dog.price ?? 0).toLocaleString()}</p>
         </div>
       </Link>
     </div>
