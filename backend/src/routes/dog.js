@@ -78,7 +78,9 @@ router.get('/', async (req, res) => {
 // New endpoint to get all pet shops for the filter dropdown
 router.get('/pet-shops', async (req, res) => {
   try {
-    const petShopRecords = await base('Pet Shops').select().all();
+    const petShopRecords = await base('Pet Shops').select({
+      fields: ['Name'] // Explicitly request the 'Name' field
+    }).all();
     const petShops = petShopRecords.map(formatPetShopRecord);
     res.json(petShops);
   } catch (error) {
