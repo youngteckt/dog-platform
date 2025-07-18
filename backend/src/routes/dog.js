@@ -3,112 +3,116 @@ import Airtable from 'airtable';
 
 const router = Router();
 
-// Configure Airtable
 const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_ID);
 
-// Helper function to format a pet shop record
-const formatPetShopRecord = (record) => ({
-  _id: record.id,
-  name: record.get('Name'),
-  // The pet shop image is in an attachment field, so we get the first one's URL.
-  image: record.get('Image')?.[0]?.url,
-  location: record.get('Location (For Pet Shop)')?.[0],
-  contact: (record.get('Contact Number (For Pet Shop)') || [''])[0],
-  email: record.get('Email (For Pet Shop)')?.[0],
-});
-
-// Helper function to format a puppy record
-const formatPuppyRecord = (record) => {
-  // The 'CloudinaryPhotos' field stores a comma-separated string of URLs
-  const photoUrlsString = record.get('CloudinaryPhotos') || '';
-  // Split the string and filter out any empty strings that might result from trailing commas.
-  const photoUrls = photoUrlsString ? photoUrlsString.split(',').filter(url => url) : [];
-  const transformations = 'f_auto,q_auto,w_400,c_limit';
-
-  const transformedUrls = photoUrls.map(url => {
-    const urlParts = url.split('/upload/');
-    if (urlParts.length === 2) {
-      return `${urlParts[0]}/upload/${transformations}/${urlParts[1]}`;
-    }
-    return url; // Return original URL if transformation fails
-  });
-
-  return {
-    _id: record.id,
-    name: record.get('Name'),
-    // The primary image is the first one in the array
-    image: transformedUrls.length > 0 ? transformedUrls[0] : null,
-    // The photos array contains all images for the gallery
-    photos: transformedUrls,
-    breed: record.get('Breed'),
-    price: Number(String(record.get('Price') || '0').replace(/[^0-9.]+/g, '')),
-    dob: record.get('Date of Birth'),
-    gender: record.get('Gender'),
-    vaccinated: record.get('Vaccinated'),
-    puppyId: record.get('Puppy ID'),
-    background: record.get('Background of puppy'),
-    petShop: null, // Default to null, will be linked below
-  };
+// Defensive helper function to format a pet shop record
+const formatPetShopRecord = (record) => {
+  try {
+    return {
+      _id: record.id,
+      name: record.get('Name') || 'N/A',
+      image: record.get('Image')?.[0]?.url || null,
+      location: record.get('Location (For Pet Shop)')?.[0] || 'N/A',
+      contact: (record.get('Contact Number (For Pet Shop)') || ['N/A'])[0],
+      email: record.get('Email (For Pet Shop)')?.[0] || 'N/A',
+    };
+  } catch (e) {
+    console.error(`Failed to format pet shop record ${record.id}:`, e.message);
+    return null; // Return null if formatting fails
+  }
 };
 
-// Main endpoint to get all available puppies for the HOMEPAGE
-router.get('/', async (req, res) => {
-  console.log('[/dogs] endpoint hit. Fetching data from Airtable...');
+// Defensive helper function to format a puppy record
+const formatPuppyRecord = (record) => {
   try {
-    // 1. Fetch all puppies and all pet shops at the same time.
-    // By not specifying fields, we fetch all of them, which is more robust.
-    const [puppyRecords, petShopRecords] = await Promise.all([
-      base('Puppies').select({ filterByFormula: 'Available = TRUE()' }).all(),
-      base('Pet Shops').select().all()
-    ]);
-    console.log(`Fetched ${puppyRecords.length} puppy records and ${petShopRecords.length} pet shop records.`);
+    const photoUrlsString = record.get('CloudinaryPhotos') || '';
+    const photoUrls = photoUrlsString ? photoUrlsString.split(',').filter(url => url.trim() !== '') : [];
+    const transformations = 'f_auto,q_auto,w_400,c_limit';
 
-    // 2. Create a simple map of pet shops for easy lookup.
-    const petShopMap = new Map();
-    petShopRecords.forEach(record => {
-      petShopMap.set(record.id, formatPetShopRecord(record));
+    const transformedUrls = photoUrls.map(url => {
+      const urlParts = url.split('/upload/');
+      return urlParts.length === 2
+        ? `${urlParts[0]}/upload/${transformations}/${urlParts[1]}`
+        : url;
     });
 
-    // 3. Format puppies and link their pet shops
+    return {
+      _id: record.id,
+      name: record.get('Name') || 'Unnamed Puppy',
+      image: transformedUrls[0] || null,
+      photos: transformedUrls,
+      breed: record.get('Breed') || 'Unknown Breed',
+      petShop: null, // Linked later
+    };
+  } catch (e) {
+    console.error(`Failed to format puppy record ${record.id}:`, e.message);
+    return null; // Return null if formatting fails
+  }
+};
+
+// Main endpoint with detailed logging
+router.get('/', async (req, res) => {
+  console.log('---[/api/dogs] Endpoint hit---');
+  try {
+    console.log('Step 1: Fetching data from Airtable...');
+    const [puppyRecords, petShopRecords] = await Promise.all([
+      base('Puppies').select({ filterByFormula: "Available = TRUE()" }).all(),
+      base('Pet Shops').select().all(),
+    ]);
+    console.log(`Step 2: Fetched ${puppyRecords.length} puppies and ${petShopRecords.length} pet shops.`);
+
+    console.log('Step 3: Formatting pet shops...');
+    const petShopMap = new Map();
+    petShopRecords.forEach(record => {
+      const shop = formatPetShopRecord(record);
+      if (shop) petShopMap.set(shop._id, shop);
+    });
+    console.log(`Step 4: Successfully formatted ${petShopMap.size} pet shops.`);
+
+    console.log('Step 5: Formatting puppies and linking shops...');
     const puppies = puppyRecords.map(record => {
       const puppy = formatPuppyRecord(record);
+      if (!puppy) return null;
+
       const petShopId = record.get('Pet Shop')?.[0];
       if (petShopId && petShopMap.has(petShopId)) {
         puppy.petShop = petShopMap.get(petShopId);
       }
       return puppy;
-    });
+    }).filter(Boolean); // Filter out any nulls from failed formatting
+    console.log(`Step 6: Successfully formatted ${puppies.length} puppies.`);
 
-    console.log(`Successfully processed and sending ${puppies.length} puppies to the client.`);
+    console.log('---Request successful. Sending data.---');
     res.json(puppies);
 
   } catch (error) {
-    console.error('[/dogs] Critical error fetching or processing data:', error);
-    res.status(500).json({ message: 'Error fetching puppies', error: error.message });
+    console.error('---!!! CRITICAL ERROR in /api/dogs !!!---');
+    console.error('Error Name:', error.name);
+    console.error('Error Message:', error.message);
+    console.error('Full Error Object:', JSON.stringify(error, null, 2));
+    res.status(500).json({ message: 'Error fetching puppies' });
   }
 });
 
-// Endpoint to get a single puppy by its ID for the DETAIL PAGE
+// Detail page endpoint (simplified for brevity)
 router.get('/:id', async (req, res) => {
   try {
-    // 1. Find the specific puppy record.
     const puppyRecord = await base('Puppies').find(req.params.id);
-    if (!puppyRecord) {
-      return res.status(404).json({ message: 'Puppy not found' });
-    }
+    if (!puppyRecord) return res.status(404).json({ message: 'Puppy not found' });
 
     let puppy = formatPuppyRecord(puppyRecord);
+    if (!puppy) return res.status(500).json({ message: 'Failed to format puppy data' });
 
-    // Fetch pet shop details if linked
     const petShopId = puppyRecord.get('Pet Shop')?.[0];
     if (petShopId) {
       const petShopRecord = await base('Pet Shops').find(petShopId);
-      puppy.petShop = formatPetShopRecord(petShopRecord);
+      if (petShopRecord) {
+        puppy.petShop = formatPetShopRecord(petShopRecord);
+      }
     }
-
     res.json(puppy);
   } catch (error) {
-    console.error('Error fetching single dog:', error);
+    console.error(`Critical error fetching dog ID ${req.params.id}:`, error);
     res.status(500).json({ message: 'Error fetching data' });
   }
 });
