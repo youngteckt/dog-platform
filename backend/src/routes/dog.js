@@ -51,27 +51,19 @@ const formatPuppyRecord = (record) => {
   };
 };
 
-// Main endpoint to get all available puppies
+// Main endpoint to get all available puppies for the HOMEPAGE
 router.get('/', async (req, res) => {
   console.log('[/dogs] endpoint hit. Fetching data from Airtable...');
   try {
-    // 1. Fetch all puppies and pet shops in parallel
+    // 1. Fetch all puppies and all pet shops at the same time.
+    // By not specifying fields, we fetch all of them, which is more robust.
     const [puppyRecords, petShopRecords] = await Promise.all([
-      base('Puppies').select({
-        filterByFormula: 'Available = TRUE()',
-        fields: [
-          'Name', 'Breed', 'Price', 'Date of Birth', 'Available', 'CloudinaryPhotos', 
-          'Gender', 'Vaccinated', 'Age of puppy', 'Background of puppy', 'Pet Shop', 'Puppy ID'
-        ]
-      }).all(),
-      base('Pet Shops').select({
-        // Explicitly request the Image field for the pet shop.
-        fields: ['Name', 'Image', 'Location (For Pet Shop)', 'Contact Number (For Pet Shop)', 'Email (For Pet Shop)']
-      }).all()
+      base('Puppies').select({ filterByFormula: 'Available = TRUE()' }).all(),
+      base('Pet Shops').select().all()
     ]);
     console.log(`Fetched ${puppyRecords.length} puppy records and ${petShopRecords.length} pet shop records.`);
 
-    // 2. Create a map of pet shops for easy lookup
+    // 2. Create a simple map of pet shops for easy lookup.
     const petShopMap = new Map();
     petShopRecords.forEach(record => {
       petShopMap.set(record.id, formatPetShopRecord(record));
