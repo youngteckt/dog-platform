@@ -10,6 +10,8 @@ const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process
 const formatPetShopRecord = (record) => ({
   _id: record.id,
   name: record.get('Name'),
+  // The pet shop image is in an attachment field, so we get the first one's URL.
+  image: record.get('Image')?.[0]?.url,
   location: record.get('Location (For Pet Shop)')?.[0],
   contact: (record.get('Contact Number (For Pet Shop)') || [''])[0],
   email: record.get('Email (For Pet Shop)')?.[0],
@@ -17,8 +19,10 @@ const formatPetShopRecord = (record) => ({
 
 // Helper function to format a puppy record
 const formatPuppyRecord = (record) => {
-  // The 'CloudinaryPhotos' field will store an array of permanent URLs
-  const photoUrls = record.get('CloudinaryPhotos') || [];
+  // The 'CloudinaryPhotos' field stores a comma-separated string of URLs
+  const photoUrlsString = record.get('CloudinaryPhotos') || '';
+  // Split the string and filter out any empty strings that might result from trailing commas.
+  const photoUrls = photoUrlsString ? photoUrlsString.split(',').filter(url => url) : [];
   const transformations = 'f_auto,q_auto,w_400,c_limit';
 
   const transformedUrls = photoUrls.map(url => {
@@ -60,7 +64,10 @@ router.get('/', async (req, res) => {
           'Gender', 'Vaccinated', 'Age of puppy', 'Background of puppy', 'Pet Shop', 'Puppy ID'
         ]
       }).all(),
-      base('Pet Shops').select({ view: 'Grid view' }).all()
+      base('Pet Shops').select({
+        // Explicitly request the Image field for the pet shop.
+        fields: ['Name', 'Image', 'Location (For Pet Shop)', 'Contact Number (For Pet Shop)', 'Email (For Pet Shop)']
+      }).all()
     ]);
     console.log(`Fetched ${puppyRecords.length} puppy records and ${petShopRecords.length} pet shop records.`);
 
