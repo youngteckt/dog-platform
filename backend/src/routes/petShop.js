@@ -67,8 +67,9 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Pet shop not found' });
     }
 
+    // Use the correct linked record field name to find puppies
     const puppyRecords = await base('Puppies').select({
-      filterByFormula: `{Pet Shop ID} = '${id}'`,
+      filterByFormula: `SEARCH('${petShopRecord.get('Pet Shop Name')}', {Pet Shop})`,
     }).all();
 
     const puppies = puppyRecords.map(record => ({ id: record.id, name: record.get('Name') }));
