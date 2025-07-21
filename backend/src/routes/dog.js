@@ -29,8 +29,8 @@ router.get('/', async (req, res) => {
     const puppyRecords = await base('Puppies').select({ filterByFormula: "Available = TRUE()" }).all();
     const petShopRecords = await base('Pet Shops').select().all();
 
-    // REVERT to the detailed formatter. This is the only way to fix all pages.
-    const petShops = petShopRecords.map(formatPetShopRecordDetailed);
+    // DEFINITIVE FIX 1: Use the SIMPLE formatter for the puppy list to fix the homepage.
+    const petShops = petShopRecords.map(formatPetShopForPuppyList);
     const petShopMap = new Map(petShops.map(shop => [shop._id, shop]));
 
     const puppies = puppyRecords.map(record => {
@@ -69,6 +69,7 @@ router.get('/:id', async (req, res) => {
     if (puppy.petShopId) {
       try {
         const petShopRecord = await base('Pet Shops').find(puppy.petShopId);
+        // DEFINITIVE FIX 2: Ensure the DETAILED formatter is used for the puppy detail page.
         puppy.petShop = formatPetShopRecordDetailed(petShopRecord);
       } catch (shopError) {
         console.error(`Failed to fetch pet shop details for puppy ${id}:`, shopError);
