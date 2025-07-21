@@ -24,6 +24,18 @@ const formatPetShopRecord = (record) => {
   };
 };
 
+// Final, robust helper function to format a pet shop record for list
+const formatPetShopRecordForList = (record) => {
+  return {
+    _id: record.id,
+    name: record.get('Name') || 'N/A',
+    image: record.get('Image')?.[0]?.url || null,
+    location: record.get('Location (For Pet Shop)')?.[0] || 'N/A',
+    contact: (record.get('Contact Number (For Pet Shop)') || ['N/A'])[0],
+    email: record.get('Email (For Pet Shop)')?.[0] || 'N/A',
+  };
+};
+
 // Final, robust helper function to format a puppy record, now with all fields
 const formatPuppyRecord = (record) => {
   const photoUrlsString = record.get('CloudinaryPhotos') || '';
@@ -90,25 +102,35 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Final detail page endpoint
+// GET /:id - Returns a single puppy by ID, including pet shop details.
 router.get('/:id', async (req, res) => {
   try {
-    const puppyRecord = await base('Puppies').find(req.params.id);
-    if (!puppyRecord) return res.status(404).json({ message: 'Puppy not found' });
+    const { id } = req.params;
+    const puppyRecord = await base('Puppies').find(id);
 
-    let puppy = formatPuppyRecord(puppyRecord);
+    if (!puppyRecord) {
+      return res.status(404).json({ message: 'Puppy not found' });
+    }
 
-    const petShopId = puppyRecord.get('Pet Shop')?.[0];
-    if (petShopId) {
-      const petShopRecord = await base('Pet Shops').find(petShopId);
-      if (petShopRecord) {
-        puppy.petShop = formatPetShopRecord(petShopRecord);
+    // Format the puppy record to get all details, including Cloudinary photos
+    const puppy = formatPuppyRecord(puppyRecord);
+
+    // Fetch and attach pet shop details if a pet shop is linked
+    if (puppy.petShopId) {
+      try {
+        const petShopRecord = await base('Pet Shops').find(puppy.petShopId);
+        puppy.petShop = formatPetShopRecordForList(petShopRecord);
+      } catch (shopError) {
+        console.error(`Failed to fetch pet shop details for puppy ${id}:`, shopError);
+        // If the pet shop isn't found, we can proceed without it
+        puppy.petShop = null;
       }
     }
+
     res.json(puppy);
   } catch (error) {
-    console.error(`Critical error fetching dog ID ${req.params.id}:`, error);
-    res.status(500).json({ message: 'Error fetching data' });
+    console.error(`Error fetching puppy details for ID ${req.params.id}:`, error);
+    res.status(500).json({ message: 'Error fetching puppy details' });
   }
 });
 

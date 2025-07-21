@@ -19,12 +19,13 @@ const formatPetShopRecordForList = (record) => ({
 
 // Helper function to format a Pet Shop for the detailed page view
 const formatPetShopRecordDetailed = (record) => {
+  // Use the exact field names provided by the user
   const shopPhoto = record.get('Shop Photo');
   return {
     _id: record.id,
     name: record.get('Pet Shop Name') || 'N/A',
     image: shopPhoto && shopPhoto.length > 0 ? shopPhoto[0].url : null,
-    description: record.get('Company Description') || 'No description available.',
+    description: record.get('Company description') || 'No description available.', // Corrected capitalization
     location: record.get('Location (For Pet Shop)')?.[0] || 'N/A',
     contact: (record.get('Contact Number (For Pet Shop)') || ['N/A'])[0],
     email: record.get('Email (For Pet Shop)')?.[0] || 'N/A',
@@ -67,9 +68,9 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Pet shop not found' });
     }
 
-    // Use the pet shop's unique ID to reliably find its puppies
+    // Use the correct linked record field name to find puppies
     const puppyRecords = await base('Puppies').select({
-      filterByFormula: `{Pet Shop} = '${petShopRecord.id}'`,
+      filterByFormula: `{Pet Shop} = '${petShopRecord.get('Pet Shop Name')}'`,
     }).all();
 
     const puppies = puppyRecords.map(record => ({ id: record.id, name: record.get('Name') }));
