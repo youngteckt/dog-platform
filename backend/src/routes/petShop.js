@@ -52,9 +52,9 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Pet shop not found' });
     }
 
-    // Use the correct linked record field name to find puppies
+    // Use the correct field name ('Name') in the formula to find puppies
     const puppyRecords = await base('Puppies').select({
-      filterByFormula: `{Pet Shop} = '${petShopRecord.get('Pet Shop Name')}'`,
+      filterByFormula: `RECORD_ID({Pet Shop}) = '${petShopRecord.id}'`,
     }).all();
 
     // Use the full puppy formatter to include images
