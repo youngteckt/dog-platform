@@ -29,8 +29,8 @@ router.get('/', async (req, res) => {
     const puppyRecords = await base('Puppies').select({ filterByFormula: "Available = TRUE()" }).all();
     const petShopRecords = await base('Pet Shops').select().all();
 
-    // Use the new, safe formatter for the puppy list
-    const petShops = petShopRecords.map(formatPetShopForPuppyList);
+    // REVERT to the detailed formatter. This is the only way to fix all pages.
+    const petShops = petShopRecords.map(formatPetShopRecordDetailed);
     const petShopMap = new Map(petShops.map(shop => [shop._id, shop]));
 
     const puppies = puppyRecords.map(record => {
