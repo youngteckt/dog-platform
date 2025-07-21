@@ -54,7 +54,7 @@ router.get('/:id', async (req, res) => {
 
     // Use the correct field name ('Name') in the formula to find puppies
     const puppyRecords = await base('Puppies').select({
-      filterByFormula: `RECORD_ID({Pet Shop}) = '${petShopRecord.id}'`,
+      filterByFormula: `FIND('${petShopRecord.id}', ARRAYJOIN({Pet Shop}))`,
     }).all();
 
     // Use the full puppy formatter to include images
