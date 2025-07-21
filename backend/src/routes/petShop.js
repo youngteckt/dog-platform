@@ -48,9 +48,6 @@ router.get('/:id', async (req, res) => {
     const { id } = req.params;
     const petShopRecord = await base('Pet Shops').find(id);
 
-    // DIAGNOSTIC LOG: Print the raw pet shop record to the console
-    console.log('--- Raw Pet Shop Record from Airtable ---', JSON.stringify(petShopRecord, null, 2));
-
     if (!petShopRecord) {
       return res.status(404).json({ message: 'Pet shop not found' });
     }

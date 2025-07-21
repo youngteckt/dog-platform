@@ -24,21 +24,15 @@ export const formatPetShopForPuppyList = (record) => {
 // Formats a Pet Shop record for a detailed view, including Cloudinary transformations
 export const formatPetShopRecordDetailed = (record) => {
   const shopPhotoField = record.get('Shop Photo');
-  const shopPhotoUrl = shopPhotoField && shopPhotoField.length > 0 ? shopPhotoField[0].url : null;
-  const transformations = 'f_auto,q_auto,w_400,c_limit';
 
-  let transformedUrl = null;
-  if (shopPhotoUrl) {
-    const urlParts = shopPhotoUrl.split('/upload/');
-    transformedUrl = urlParts.length === 2
-      ? `${urlParts[0]}/upload/${transformations}/${urlParts[1]}`
-      : shopPhotoUrl;
-  }
+  // FIX: Use the direct URL from Airtable without transformation.
+  // The Cloudinary transformation was failing because Airtable URLs are not Cloudinary URLs.
+  const imageUrl = shopPhotoField?.[0]?.url || null;
 
   return {
     _id: record.id,
-    name: record.get('Pet Shop Name') || 'N/A',
-    image: transformedUrl,
+    name: record.get('Pet Shop Name') || 'N/A', // Use the correct field name
+    image: imageUrl, // Use the direct URL
     description: record.get('Company description') || 'No description available.',
     location: record.get('Location (For Pet Shop)')?.[0] || 'N/A',
     contact: (record.get('Contact Number (For Pet Shop)') || ['N/A'])[0],
