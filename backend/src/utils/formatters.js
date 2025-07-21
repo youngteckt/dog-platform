@@ -60,13 +60,15 @@ export const formatPuppyRecord = (record) => {
     // Provide the array of objects for the detail page gallery.
     photos: galleryPhotos,
     breed: record.get('Breed') || 'Unknown Breed',
+    // Add the 'Age of puppy' field.
+    age: record.get('Age of puppy') || null,
     price: Number(String(record.get('Price') || '0').replace(/[^0-9.]+/g, '')),
     dob: record.get('Date of Birth') || null,
     gender: record.get('Gender') || 'N/A',
     vaccinated: record.get('Vaccinated') || false,
     // DEFINITIVE FIX 2: Provide the 'description' field for the background text.
     description: record.get('Background of puppy') || 'No background available.',
-    petShopId: (record.get('Pet Shop') || [])[0] || null,
+    petShopId: (record.get('Pet Shop') && record.get('Pet Shop')[0]) || null,
     petShop: null, // This will be linked in the route handler
   };
 };

@@ -17,7 +17,12 @@ const PuppyCard = ({ puppy }) => {
         className="w-full h-40 object-contain"
       />
       <div className="p-4">
-        <h3 className="font-bold text-lg text-gray-800">{puppy.name}</h3>
+        <div className="flex justify-between items-baseline">
+          <h3 className="font-bold text-lg text-gray-800 truncate">{puppy.name}</h3>
+          {puppy.age && (
+            <p className="text-sm text-gray-600 whitespace-nowrap">{puppy.age} months old</p>
+          )}
+        </div>
         <p className="text-sm text-gray-500 mb-2">{puppy.breed}</p>
         <p className="font-semibold text-gray-900">{formattedPrice}</p>
       </div>
