@@ -23,6 +23,7 @@ const HomePage = () => {
   const [selectedBreeds, setSelectedBreeds] = useState([]);
   const [selectedPetShops, setSelectedPetShops] = useState([]);
   const [selectedPriceRanges, setSelectedPriceRanges] = useState([]);
+  const [allPetShops, setAllPetShops] = useState([]);
 
   useEffect(() => {
     const fetchDogs = async () => {
@@ -57,11 +58,8 @@ const HomePage = () => {
   useEffect(() => {
     const fetchPetShops = async () => {
       try {
-        // Corrected endpoint: Removed the extra '/api' prefix
         const shops = await apiFetch('/pet-shops');
-        const uniquePetShops = [...new Set(shops.map(petShop => petShop.name).filter(Boolean))];
-        setSelectedPetShops([]);
-        setSelectedPetShops(uniquePetShops);
+        setAllPetShops(shops || []);
       } catch (error) {
         console.error('Failed to fetch pet shops:', error);
       }
@@ -239,7 +237,7 @@ const HomePage = () => {
         isOpen={isPetShopModalOpen}
         onClose={() => setIsPetShopModalOpen(false)}
         title="Pet Shop"
-        items={uniquePetShops}
+        items={allPetShops.map(shop => shop.name)}
         selectedItems={selectedPetShops}
         onApply={handleApplyPetShopFilters}
       />
