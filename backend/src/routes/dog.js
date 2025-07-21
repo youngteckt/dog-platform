@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import Airtable from 'airtable';
-import { formatPuppyRecord, formatPetShopRecordForList, formatPetShopRecordDetailed, formatPetShopForPuppyList } from '../utils/formatters.js';
+import { formatPuppyRecord, formatPetShopRecordDetailed, formatPetShopRecordForList, formatPetShopForPuppyList } from '../utils/formatters.js';
 
 const router = Router();
 
@@ -69,7 +69,7 @@ router.get('/:id', async (req, res) => {
     if (puppy.petShopId) {
       try {
         const petShopRecord = await base('Pet Shops').find(puppy.petShopId);
-        puppy.petShop = formatPetShopRecordForList(petShopRecord);
+        puppy.petShop = formatPetShopRecordDetailed(petShopRecord);
       } catch (shopError) {
         console.error(`Failed to fetch pet shop details for puppy ${id}:`, shopError);
         // If the pet shop isn't found, we can proceed without it
