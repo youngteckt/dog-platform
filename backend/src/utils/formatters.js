@@ -8,6 +8,19 @@ export const formatPetShopRecordForList = (record) => ({
   image: record.get('Shop Photo')?.[0]?.url || null,
 });
 
+// New, safe formatter specifically for pet shop data linked to puppies on the homepage.
+export const formatPetShopForPuppyList = (record) => {
+  const shopPhotoField = record.get('Shop Photo');
+  // Provides a simple, untransformed URL, which is all the puppy card needs.
+  const shopPhotoUrl = shopPhotoField && shopPhotoField.length > 0 ? shopPhotoField[0].url : null;
+
+  return {
+    _id: record.id,
+    name: record.get('Pet Shop Name') || 'N/A',
+    image: shopPhotoUrl,
+  };
+};
+
 // Formats a Pet Shop record for a detailed view, including Cloudinary transformations
 export const formatPetShopRecordDetailed = (record) => {
   const shopPhotoField = record.get('Shop Photo');

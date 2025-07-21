@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import Airtable from 'airtable';
-import { formatPuppyRecord, formatPetShopRecordForList, formatPetShopRecordDetailed } from '../utils/formatters.js';
+import { formatPuppyRecord, formatPetShopRecordForList, formatPetShopRecordDetailed, formatPetShopForPuppyList } from '../utils/formatters.js';
 
 const router = Router();
 
@@ -29,8 +29,8 @@ router.get('/', async (req, res) => {
     const puppyRecords = await base('Puppies').select({ filterByFormula: "Available = TRUE()" }).all();
     const petShopRecords = await base('Pet Shops').select().all();
 
-    // Use the correct, simple formatter for the pet shop list
-    const petShops = petShopRecords.map(formatPetShopRecordForList);
+    // Use the new, safe formatter for the puppy list
+    const petShops = petShopRecords.map(formatPetShopForPuppyList);
     const petShopMap = new Map(petShops.map(shop => [shop._id, shop]));
 
     const puppies = puppyRecords.map(record => {
