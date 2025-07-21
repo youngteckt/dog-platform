@@ -37,7 +37,6 @@ export const formatPetShopRecordDetailed = (record) => {
     location: record.get('Location (For Pet Shop)')?.[0] || 'N/A',
     contact: (record.get('Contact Number (For Pet Shop)') || ['N/A'])[0],
     email: record.get('Email (For Pet Shop)')?.[0] || 'N/A',
-    puppies: [], // Puppies will be added separately
   };
 };
 
