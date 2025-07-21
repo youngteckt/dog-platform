@@ -29,7 +29,8 @@ router.get('/', async (req, res) => {
     const puppyRecords = await base('Puppies').select({ filterByFormula: "Available = TRUE()" }).all();
     const petShopRecords = await base('Pet Shops').select().all();
 
-    const petShops = petShopRecords.map(formatPetShopRecordDetailed);
+    // Use the correct, simple formatter for the pet shop list
+    const petShops = petShopRecords.map(formatPetShopRecordForList);
     const petShopMap = new Map(petShops.map(shop => [shop._id, shop]));
 
     const puppies = puppyRecords.map(record => {
