@@ -57,8 +57,8 @@ const HomePage = () => {
   useEffect(() => {
     const fetchPetShops = async () => {
       try {
-        // Corrected endpoint: Fetches from /api/pet-shops
-        const shops = await apiFetch('/api/pet-shops');
+        // Corrected endpoint: Removed the extra '/api' prefix
+        const shops = await apiFetch('/pet-shops');
         const uniquePetShops = [...new Set(shops.map(petShop => petShop.name).filter(Boolean))];
         setSelectedPetShops([]);
         setSelectedPetShops(uniquePetShops);
