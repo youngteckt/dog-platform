@@ -2,10 +2,25 @@ import { Router } from 'express';
 import Airtable from 'airtable';
 
 const router = Router();
-
-// Configure Airtable connection
 const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_ID);
-const petShopsTable = base('Pet Shops');
+
+// Helper function to format a Pet Shop record for the dropdown list
+const formatPetShopRecordForList = (record) => ({
+  _id: record.id,
+  name: record.get('Name') || 'N/A',
+});
+
+// GET /api/pet-shops - Returns a simple list of all pet shops for filtering.
+router.get('/', async (req, res) => {
+  try {
+    const petShopRecords = await base('Pet Shops').select({ fields: ['Name'] }).all();
+    const petShops = petShopRecords.map(formatPetShopRecordForList);
+    res.json(petShops);
+  } catch (error) {
+    console.error('Critical error fetching pet shop list:', error);
+    res.status(500).json({ message: 'Error fetching pet shops' });
+  }
+});
 
 // Helper function to format a Pet Shop record
 const formatPetShopRecord = (record) => {
@@ -21,23 +36,11 @@ const formatPetShopRecord = (record) => {
   };
 };
 
-// GET all pet shops
-router.get('/', async (req, res) => {
-  try {
-    const records = await petShopsTable.select().all();
-    const petShops = records.map(formatPetShopRecord);
-    res.json(petShops);
-  } catch (error) {
-    console.error('Error fetching pet shops from Airtable:', error);
-    res.status(500).json({ message: 'Error fetching pet shops' });
-  }
-});
-
 // GET a single pet shop by ID with its puppies
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const petShopRecord = await petShopsTable.find(id);
+    const petShopRecord = await base('Pet Shops').find(id);
 
     if (!petShopRecord) {
       return res.status(404).json({ message: 'Pet shop not found' });

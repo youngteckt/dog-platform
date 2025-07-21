@@ -75,20 +75,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// New endpoint to get all pet shops for the filter dropdown
-router.get('/pet-shops', async (req, res) => {
-  try {
-    const petShopRecords = await base('Pet Shops').select().all();
-    // --- DIAGNOSTIC LOG --- 
-    console.log('--- RAW PET SHOP DATA FROM AIRTABLE ---', JSON.stringify(petShopRecords, null, 2));
-    const petShops = petShopRecords.map(formatPetShopRecord);
-    res.json(petShops);
-  } catch (error) {
-    console.error('Critical error in /api/dogs/pet-shops:', error);
-    res.status(500).json({ message: 'Error fetching pet shops' });
-  }
-});
-
 // Final detail page endpoint
 router.get('/:id', async (req, res) => {
   try {

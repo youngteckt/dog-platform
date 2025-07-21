@@ -53,6 +53,23 @@ const HomePage = () => {
     }
   }, [location.state]);
 
+  // Fetch all pet shops for the filter dropdown
+  useEffect(() => {
+    const fetchPetShops = async () => {
+      try {
+        // Corrected endpoint: Fetches from /api/pet-shops
+        const shops = await apiFetch('/api/pet-shops');
+        const uniquePetShops = [...new Set(shops.map(petShop => petShop.name).filter(Boolean))];
+        setSelectedPetShops([]);
+        setSelectedPetShops(uniquePetShops);
+      } catch (error) {
+        console.error('Failed to fetch pet shops:', error);
+      }
+    };
+
+    fetchPetShops();
+  }, []);
+
   const uniqueBreeds = useMemo(() => [...new Set(dogs.map(dog => dog.breed))], [dogs]);
   const uniquePetShops = useMemo(() => [...new Set(dogs.map(dog => dog.petShop?.name).filter(Boolean))], [dogs]);
 
