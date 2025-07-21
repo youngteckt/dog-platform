@@ -37,8 +37,9 @@ export const formatPetShopRecordDetailed = (record) => {
     shopPhotoUrl: directShopPhotoUrl,
     description: record.get('Company description') || 'No description available.',
     location: record.get('Location') || 'N/A',
-    contact: (record.get('Contact Number (For Pet Shop)') || ['N/A'])[0],
-    email: record.get('Email (For Pet Shop)')?.[0] || 'N/A',
+    // DEFINITIVE FIX: Use the correct 'Contact Number' and 'Email' field names.
+    contact: record.get('Contact Number') || 'N/A',
+    email: record.get('Email') || 'N/A',
   };
 };
 
