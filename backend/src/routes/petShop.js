@@ -52,10 +52,18 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Pet shop not found' });
     }
 
-    // Use the correct field name ('Name') in the formula to find puppies
-    const puppyRecords = await base('Puppies').select({
-      filterByFormula: `FIND('${petShopRecord.id}', ARRAYJOIN({Pet Shop}))`,
-    }).all();
+    // DEFINITIVE FIX: Use the correct logic based on the user's schema.
+    // First, get the array of linked puppy record IDs from the 'Available Puppies' field.
+    const availablePuppyIds = petShopRecord.get('Available Puppies') || [];
+    let puppyRecords = [];
+
+    // If there are linked puppies, create a formula to fetch them by their record IDs.
+    if (availablePuppyIds.length > 0) {
+      const formula = 'OR(' + availablePuppyIds.map(id => `RECORD_ID() = '${id}'`).join(',') + ')';
+      puppyRecords = await base('Puppies').select({
+        filterByFormula: formula,
+      }).all();
+    }
 
     // Use the full puppy formatter to include images
     const puppies = puppyRecords.map(formatPuppyRecord);
