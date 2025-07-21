@@ -24,6 +24,7 @@ const formatPetShopRecordDetailed = (record) => {
     _id: record.id,
     name: record.get('Pet Shop Name') || 'N/A',
     image: shopPhoto && shopPhoto.length > 0 ? shopPhoto[0].url : null,
+    description: record.get('Company Description') || 'No description available.',
     location: record.get('Location (For Pet Shop)')?.[0] || 'N/A',
     contact: (record.get('Contact Number (For Pet Shop)') || ['N/A'])[0],
     email: record.get('Email (For Pet Shop)')?.[0] || 'N/A',
