@@ -60,8 +60,9 @@ export const formatPuppyRecord = (record) => {
     // Provide the array of objects for the detail page gallery.
     photos: galleryPhotos,
     breed: record.get('Breed') || 'Unknown Breed',
-    // Add the 'Age of puppy' field.
+    // DEFINITIVE FIX: Add 'Age of puppy' and 'ID Code' for the detail page.
     age: record.get('Age of puppy') || null,
+    idCode: record.get('ID Code') || 'N/A',
     price: Number(String(record.get('Price') || '0').replace(/[^0-9.]+/g, '')),
     dob: record.get('Date of Birth') || null,
     gender: record.get('Gender') || 'N/A',
