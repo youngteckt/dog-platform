@@ -4,6 +4,8 @@
 export const formatPetShopRecordForList = (record) => ({
   _id: record.id,
   name: record.get('Pet Shop Name') || 'N/A',
+  // Return a simple image URL without transformation for the list view
+  image: record.get('Shop Photo')?.[0]?.url || null,
 });
 
 // Formats a Pet Shop record for a detailed view, including Cloudinary transformations

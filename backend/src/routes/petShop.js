@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import Airtable from 'airtable';
 // Import the new, centralized formatters
-import { formatPuppyRecord, formatPetShopRecordDetailed } from '../utils/formatters.js';
+import { formatPuppyRecord, formatPetShopRecordDetailed, formatPetShopRecordForList } from '../utils/formatters.js';
 
 const router = Router();
 const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_ID);
@@ -28,8 +28,8 @@ router.get('/', async (req, res) => {
     // Fetch all records from the 'Pet Shops' table
     const records = await base('Pet Shops').select().all();
 
-    // Format the records for the list view
-    const petShops = records.map(formatPetShopRecordDetailed);
+    // Format the records for the list view using the simple formatter
+    const petShops = records.map(formatPetShopRecordForList);
 
     // Store the fresh data in the cache
     petShopListCache.data = petShops;
