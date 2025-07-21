@@ -5,6 +5,13 @@ const router = Router();
 
 const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_ID);
 
+// In-memory cache for puppies
+const puppyCache = {
+  data: null,
+  timestamp: null,
+  duration: 5 * 60 * 1000, // 5 minutes
+};
+
 // Final, robust helper function to format a pet shop record
 const formatPetShopRecord = (record) => {
   return {
@@ -45,19 +52,22 @@ const formatPuppyRecord = (record) => {
   };
 };
 
-// Final main endpoint
+// Main endpoint to get all puppies, now with caching
 router.get('/', async (req, res) => {
-  try {
-    const [puppyRecords, petShopRecords] = await Promise.all([
-      base('Puppies').select({ filterByFormula: "Available = TRUE()" }).all(),
-      base('Pet Shops').select().all(),
-    ]);
+  // Check if we have valid data in the cache
+  if (puppyCache.data && (Date.now() - puppyCache.timestamp < puppyCache.duration)) {
+    console.log('--- Serving puppies from cache ---');
+    return res.json(puppyCache.data);
+  }
 
-    const petShopMap = new Map();
-    petShopRecords.forEach(record => {
-      const shop = formatPetShopRecord(record);
-      if (shop) petShopMap.set(shop._id, shop);
-    });
+  try {
+    console.log('--- Fetching puppies from Airtable ---');
+    // Fetch all pet shops first to create a map
+    const petShopRecords = await base('Pet Shops').select().all();
+    const petShopMap = new Map(petShopRecords.map(rec => [rec.id, formatPetShopRecord(rec)]));
+
+    // Fetch all puppies
+    const puppyRecords = await base('Puppies').select({ filterByFormula: "Available = TRUE()" }).all();
 
     const puppies = puppyRecords.map(record => {
       const puppy = formatPuppyRecord(record);
@@ -67,6 +77,10 @@ router.get('/', async (req, res) => {
       }
       return puppy;
     });
+
+    // Store the fresh data in the cache
+    puppyCache.data = puppies;
+    puppyCache.timestamp = Date.now();
 
     res.json(puppies);
   } catch (error) {

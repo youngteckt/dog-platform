@@ -4,17 +4,50 @@ import Airtable from 'airtable';
 const router = Router();
 const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_ID);
 
-// Helper function to format a Pet Shop record for the dropdown list
+// In-memory cache for the pet shop list
+const petShopListCache = {
+  data: null,
+  timestamp: null,
+  duration: 5 * 60 * 1000, // 5 minutes
+};
+
+// Helper function to format a Pet Shop record for the simple list
 const formatPetShopRecordForList = (record) => ({
   _id: record.id,
   name: record.get('Name') || 'N/A',
 });
 
-// GET /api/pet-shops - Returns a simple list of all pet shops for filtering.
+// Helper function to format a Pet Shop for the detailed page view
+const formatPetShopRecordDetailed = (record) => {
+  const shopPhoto = record.get('Shop Photo');
+  return {
+    _id: record.id,
+    name: record.get('Name') || 'N/A',
+    image: shopPhoto && shopPhoto.length > 0 ? shopPhoto[0].url : null,
+    location: record.get('Location (For Pet Shop)')?.[0] || 'N/A',
+    contact: (record.get('Contact Number (For Pet Shop)') || ['N/A'])[0],
+    email: record.get('Email (For Pet Shop)')?.[0] || 'N/A',
+    puppies: [], // Puppies will be added separately
+  };
+};
+
+// GET / - Returns a simple list of all pet shops for filtering.
 router.get('/', async (req, res) => {
+  // Check if we have valid data in the cache
+  if (petShopListCache.data && (Date.now() - petShopListCache.timestamp < petShopListCache.duration)) {
+    console.log('--- Serving pet shop list from cache ---');
+    return res.json(petShopListCache.data);
+  }
+
   try {
+    console.log('--- Fetching pet shop list from Airtable ---');
     const petShopRecords = await base('Pet Shops').select({ fields: ['Name'] }).all();
     const petShops = petShopRecords.map(formatPetShopRecordForList);
+
+    // Store the fresh data in the cache
+    petShopListCache.data = petShops;
+    petShopListCache.timestamp = Date.now();
+
     res.json(petShops);
   } catch (error) {
     console.error('Critical error fetching pet shop list:', error);
@@ -22,21 +55,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Helper function to format a Pet Shop record
-const formatPetShopRecord = (record) => {
-  const shopPhoto = record.get('Shop Photo');
-  return {
-    _id: record.id,
-    name: record.get('Pet Shop Name'),
-    location: record.get('Location'),
-    contact: record.get('Contact Number'),
-    email: record.get('Email'),
-    description: record.get('Company description'),
-    shopPhotoUrl: shopPhoto && shopPhoto.length > 0 ? shopPhoto[0].url : null,
-  };
-};
-
-// GET a single pet shop by ID with its puppies
+// GET /:id - Returns a single pet shop by ID with its puppies
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -46,35 +65,18 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ message: 'Pet shop not found' });
     }
 
-    // Fetch puppies using the 'Available Puppies' linked records field
-    const puppyIds = petShopRecord.get('Available Puppies') || [];
-    let puppies = [];
+    const puppyRecords = await base('Puppies').select({
+      filterByFormula: `{Pet Shop ID} = '${id}'`,
+    }).all();
 
-    if (puppyIds.length > 0) {
-      const filterFormula = `OR(${puppyIds.map(id => `RECORD_ID() = '${id}'`).join(',')})`;
-      const puppyRecords = await base('Puppies').select({ filterByFormula: filterFormula }).all();
-      
-      puppies = puppyRecords.map(record => {
-        const photos = record.get('Photos');
-        // Sanitize the price string to remove currency symbols and commas before converting to a number
-        const rawPrice = record.get('Price') || '';
-        const price = parseFloat(String(rawPrice).replace(/[^0-9.-]+/g, '')) || 0;
-        return {
-          _id: record.id,
-          name: record.get('Name') || 'Unnamed',
-          breed: record.get('Breed'),
-          price: price,
-          image: photos && photos.length > 0 ? photos[0].url : null,
-        };
-      });
-    }
+    const puppies = puppyRecords.map(record => ({ id: record.id, name: record.get('Name') }));
 
-    const petShop = formatPetShopRecord(petShopRecord);
+    const petShop = formatPetShopRecordDetailed(petShopRecord);
     petShop.puppies = puppies;
 
     res.json(petShop);
   } catch (error) {
-    console.error(`Error fetching details for pet shop ${req.params.id}:`, error);
+    console.error(`Error fetching pet shop details for ID ${req.params.id}:`, error);
     res.status(500).json({ message: 'Error fetching pet shop details' });
   }
 });
