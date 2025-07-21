@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import Airtable from 'airtable';
+import { formatPuppyRecord, formatPetShopRecordForList, formatPetShopRecordDetailed } from '../utils/formatters.js';
 
 const router = Router();
 
@@ -12,58 +13,7 @@ const puppyCache = {
   duration: 5 * 60 * 1000, // 5 minutes
 };
 
-// Final, robust helper function to format a pet shop record
-const formatPetShopRecord = (record) => {
-  return {
-    _id: record.id,
-    name: record.get('Name') || 'N/A',
-    image: record.get('Image')?.[0]?.url || null,
-    location: record.get('Location (For Pet Shop)')?.[0] || 'N/A',
-    contact: (record.get('Contact Number (For Pet Shop)') || ['N/A'])[0],
-    email: record.get('Email (For Pet Shop)')?.[0] || 'N/A',
-  };
-};
-
-// Final, robust helper function to format a pet shop record for list
-const formatPetShopRecordForList = (record) => {
-  return {
-    _id: record.id,
-    name: record.get('Name') || 'N/A',
-    image: record.get('Image')?.[0]?.url || null,
-    location: record.get('Location (For Pet Shop)')?.[0] || 'N/A',
-    contact: (record.get('Contact Number (For Pet Shop)') || ['N/A'])[0],
-    email: record.get('Email (For Pet Shop)')?.[0] || 'N/A',
-  };
-};
-
-// Final, robust helper function to format a puppy record, now with all fields
-const formatPuppyRecord = (record) => {
-  const photoUrlsString = record.get('CloudinaryPhotos') || '';
-  const photoUrls = photoUrlsString ? photoUrlsString.split(',').filter(url => url.trim() !== '') : [];
-  const transformations = 'f_auto,q_auto,w_400,c_limit';
-
-  const transformedUrls = photoUrls.map(url => {
-    const urlParts = url.split('/upload/');
-    return urlParts.length === 2
-      ? `${urlParts[0]}/upload/${transformations}/${urlParts[1]}`
-      : url;
-  });
-
-  return {
-    _id: record.id,
-    name: record.get('Name') || 'Unnamed Puppy',
-    image: transformedUrls[0] || null,
-    photos: transformedUrls,
-    breed: record.get('Breed') || 'Unknown Breed',
-    price: Number(String(record.get('Price') || '0').replace(/[^0-9.]+/g, '')),
-    dob: record.get('Date of Birth') || null,
-    gender: record.get('Gender') || 'N/A',
-    vaccinated: record.get('Vaccinated') || false,
-    background: record.get('Background of puppy') || 'No background available.',
-    petShopId: (record.get('Pet Shop') || [])[0] || null,
-    petShop: null, // Linked later
-  };
-};
+// All formatting functions have been moved to utils/formatters.js to avoid circular dependencies.
 
 // Main endpoint to get all puppies, now with caching
 router.get('/', async (req, res) => {
@@ -76,17 +26,16 @@ router.get('/', async (req, res) => {
   try {
     console.log('--- Fetching puppies from Airtable ---');
     // Fetch all pet shops first to create a map
-    const petShopRecords = await base('Pet Shops').select().all();
-    const petShopMap = new Map(petShopRecords.map(rec => [rec.id, formatPetShopRecord(rec)]));
-
-    // Fetch all puppies
     const puppyRecords = await base('Puppies').select({ filterByFormula: "Available = TRUE()" }).all();
+    const petShopRecords = await base('Pet Shops').select().all();
+
+    const petShops = petShopRecords.map(formatPetShopRecordDetailed);
+    const petShopMap = new Map(petShops.map(shop => [shop._id, shop]));
 
     const puppies = puppyRecords.map(record => {
       const puppy = formatPuppyRecord(record);
-      const petShopId = record.get('Pet Shop')?.[0];
-      if (petShopId && petShopMap.has(petShopId)) {
-        puppy.petShop = petShopMap.get(petShopId);
+      if (puppy.petShopId && petShopMap.has(puppy.petShopId)) {
+        puppy.petShop = petShopMap.get(puppy.petShopId);
       }
       return puppy;
     });

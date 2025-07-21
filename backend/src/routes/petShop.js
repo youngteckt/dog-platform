@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import Airtable from 'airtable';
-// Import the puppy formatter to use for the puppy list
-import { formatPuppyRecord } from './dog.js';
+// Import the new, centralized formatters
+import { formatPuppyRecord, formatPetShopRecordDetailed } from '../utils/formatters.js';
 
 const router = Router();
 const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_ID);
@@ -13,27 +13,7 @@ const petShopListCache = {
   duration: 5 * 60 * 1000, // 5 minutes
 };
 
-// Helper function to format a Pet Shop record for the simple list
-const formatPetShopRecordForList = (record) => ({
-  _id: record.id,
-  name: record.get('Pet Shop Name') || 'N/A',
-});
-
-// Helper function to format a Pet Shop for the detailed page view
-const formatPetShopRecordDetailed = (record) => {
-  // Use the exact field names provided by the user
-  const shopPhoto = record.get('Shop Photo');
-  return {
-    _id: record.id,
-    name: record.get('Pet Shop Name') || 'N/A',
-    image: shopPhoto && shopPhoto.length > 0 ? shopPhoto[0].url : null,
-    description: record.get('Company description') || 'No description available.', // Corrected capitalization
-    location: record.get('Location (For Pet Shop)')?.[0] || 'N/A',
-    contact: (record.get('Contact Number (For Pet Shop)') || ['N/A'])[0],
-    email: record.get('Email (For Pet Shop)')?.[0] || 'N/A',
-    puppies: [], // Puppies will be added separately
-  };
-};
+// All formatting functions have been moved to utils/formatters.js to avoid circular dependencies.
 
 // GET / - Returns a simple list of all pet shops for filtering.
 router.get('/', async (req, res) => {
@@ -45,9 +25,11 @@ router.get('/', async (req, res) => {
 
   try {
     console.log('--- Fetching pet shop list from Airtable ---');
-    // Remove the 'fields' filter to prevent crashes from incorrect field names
-    const petShopRecords = await base('Pet Shops').select().all();
-    const petShops = petShopRecords.map(formatPetShopRecordForList);
+    // Fetch all records from the 'Pet Shops' table
+    const records = await base('Pet Shops').select().all();
+
+    // Format the records for the list view
+    const petShops = records.map(formatPetShopRecordDetailed);
 
     // Store the fresh data in the cache
     petShopListCache.data = petShops;
