@@ -33,11 +33,12 @@ export const formatPetShopRecordDetailed = (record) => {
   return {
     _id: record.id,
     name: record.get('Pet Shop Name') || 'N/A',
-    // FIX: Rename 'image' to 'shopPhotoUrl' to match the frontend component.
-    shopPhotoUrl: directShopPhotoUrl,
+    // DEFINITIVE UNIFIED FIX: Provide the photo under BOTH field names to satisfy all pages.
+    image: directShopPhotoUrl, // For Puppy Detail Page
+    shopPhotoUrl: directShopPhotoUrl, // For Homepage, Pet Shop Directory, and Pet Shop Detail Page
     description: record.get('Company description') || 'No description available.',
     location: record.get('Location') || 'N/A',
-    // DEFINITIVE FIX: Use the correct 'Contact Number' and 'Email' field names.
+    // Use the correct field names as confirmed by the user.
     contact: record.get('Contact Number') || 'N/A',
     email: record.get('Email') || 'N/A',
   };
