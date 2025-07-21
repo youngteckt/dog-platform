@@ -1,5 +1,7 @@
 import { Router } from 'express';
 import Airtable from 'airtable';
+// Import the puppy formatter to use for the puppy list
+import { formatPuppyRecord } from './dog.js';
 
 const router = Router();
 const base = new Airtable({ apiKey: process.env.AIRTABLE_API_KEY }).base(process.env.AIRTABLE_BASE_ID);
@@ -73,7 +75,8 @@ router.get('/:id', async (req, res) => {
       filterByFormula: `{Pet Shop} = '${petShopRecord.get('Pet Shop Name')}'`,
     }).all();
 
-    const puppies = puppyRecords.map(record => ({ id: record.id, name: record.get('Name') }));
+    // Use the full puppy formatter to include images
+    const puppies = puppyRecords.map(formatPuppyRecord);
 
     const petShop = formatPetShopRecordDetailed(petShopRecord);
     petShop.puppies = puppies;
