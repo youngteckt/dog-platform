@@ -14,7 +14,7 @@ const petShopListCache = {
 // Helper function to format a Pet Shop record for the simple list
 const formatPetShopRecordForList = (record) => ({
   _id: record.id,
-  name: record.get('Name') || 'N/A',
+  name: record.get('Pet Shop Name') || 'N/A',
 });
 
 // Helper function to format a Pet Shop for the detailed page view
@@ -22,7 +22,7 @@ const formatPetShopRecordDetailed = (record) => {
   const shopPhoto = record.get('Shop Photo');
   return {
     _id: record.id,
-    name: record.get('Name') || 'N/A',
+    name: record.get('Pet Shop Name') || 'N/A',
     image: shopPhoto && shopPhoto.length > 0 ? shopPhoto[0].url : null,
     location: record.get('Location (For Pet Shop)')?.[0] || 'N/A',
     contact: (record.get('Contact Number (For Pet Shop)') || ['N/A'])[0],
@@ -41,7 +41,7 @@ router.get('/', async (req, res) => {
 
   try {
     console.log('--- Fetching pet shop list from Airtable ---');
-    const petShopRecords = await base('Pet Shops').select({ fields: ['Name'] }).all();
+    const petShopRecords = await base('Pet Shops').select({ fields: ['Pet Shop Name'] }).all();
     const petShops = petShopRecords.map(formatPetShopRecordForList);
 
     // Store the fresh data in the cache
