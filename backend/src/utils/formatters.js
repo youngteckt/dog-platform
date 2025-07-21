@@ -42,28 +42,26 @@ export const formatPetShopRecordDetailed = (record) => {
 
 // Formats a Puppy record, including Cloudinary transformations for all photos
 export const formatPuppyRecord = (record) => {
-  const photoUrlsString = record.get('CloudinaryPhotos') || '';
-  const photoUrls = photoUrlsString ? photoUrlsString.split(',').filter(url => url.trim() !== '') : [];
-  const transformations = 'f_auto,q_auto,w_400,c_limit';
+  // DEFINITIVE FIX 1: Use the correct 'Photos' field, which is an attachment type.
+  const photoAttachments = record.get('Photos') || [];
 
-  const transformedUrls = photoUrls.map(url => {
-    const urlParts = url.split('/upload/');
-    return urlParts.length === 2
-      ? `${urlParts[0]}/upload/${transformations}/${urlParts[1]}`
-      : url;
-  });
+  // DEFINITIVE FIX 3: Create an array of objects like { url: '...' } for the gallery.
+  const galleryPhotos = photoAttachments.map(attachment => ({ url: attachment.url }));
 
   return {
     _id: record.id,
     name: record.get('Name') || 'Unnamed Puppy',
-    image: transformedUrls[0] || null,
-    photos: transformedUrls,
+    // Provide a simple image URL string for homepage compatibility.
+    image: photoAttachments.length > 0 ? photoAttachments[0].url : null,
+    // Provide the array of objects for the detail page gallery.
+    photos: galleryPhotos,
     breed: record.get('Breed') || 'Unknown Breed',
     price: Number(String(record.get('Price') || '0').replace(/[^0-9.]+/g, '')),
     dob: record.get('Date of Birth') || null,
     gender: record.get('Gender') || 'N/A',
     vaccinated: record.get('Vaccinated') || false,
-    background: record.get('Background of puppy') || 'No background available.',
+    // DEFINITIVE FIX 2: Provide the 'description' field for the background text.
+    description: record.get('Background of puppy') || 'No background available.',
     petShopId: (record.get('Pet Shop') || [])[0] || null,
     petShop: null, // This will be linked in the route handler
   };
