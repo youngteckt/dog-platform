@@ -48,6 +48,7 @@ const formatPuppyRecord = (record) => {
     gender: record.get('Gender') || 'N/A',
     vaccinated: record.get('Vaccinated') || false,
     background: record.get('Background of puppy') || 'No background available.',
+    petShopId: (record.get('Pet Shop') || [])[0] || null,
     petShop: null, // Linked later
   };
 };
