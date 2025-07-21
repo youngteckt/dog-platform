@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { IoLocationOutline } from 'react-icons/io5';
 import PuppyCard from '../components/PuppyCard';
 import { apiFetch } from '../utils/api';
 
@@ -53,6 +54,15 @@ const PetShopDetailsPage = () => {
         <div className="bg-white p-8 rounded-2xl shadow-lg mb-8">
           <h2 className="text-xl font-bold text-blue-600 mb-3">Company:</h2>
           <p className="text-gray-700 leading-relaxed">{petShop.description || 'No description available.'}</p>
+        </div>
+
+        {/* Location */}
+        <div className="bg-white p-8 rounded-2xl shadow-lg mb-8">
+          <h2 className="text-xl font-bold text-blue-600 mb-3 flex items-center">
+            <IoLocationOutline className="mr-2" />
+            Location:
+          </h2>
+          <p className="text-gray-700 leading-relaxed">{petShop.location || 'N/A'}</p>
         </div>
 
         {/* Available Puppies */}
