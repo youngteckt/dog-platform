@@ -60,7 +60,7 @@ const DogDetailsPage = () => {
       {/* Main Grid for Desktop */}
       <div className="grid grid-cols-1 lg:grid-cols-2 lg:gap-12">
         {/* Left Column: Image Gallery (Sticky on Desktop) */}
-        <div className="lg:sticky top-4 self-start">
+        <div className="lg:sticky top-4 self-start mb-6 lg:mb-0">
           <div className="mb-6">
             <img src={selectedImage} alt={dog.name} className="w-full h-auto object-cover rounded-2xl shadow-lg mb-4" />
             <div className="grid grid-cols-4 gap-4">
