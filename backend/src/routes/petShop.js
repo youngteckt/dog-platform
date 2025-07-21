@@ -41,7 +41,8 @@ router.get('/', async (req, res) => {
 
   try {
     console.log('--- Fetching pet shop list from Airtable ---');
-    const petShopRecords = await base('Pet Shops').select({ fields: ['Pet Shop Name'] }).all();
+    // Remove the 'fields' filter to prevent crashes from incorrect field names
+    const petShopRecords = await base('Pet Shops').select().all();
     const petShops = petShopRecords.map(formatPetShopRecordForList);
 
     // Store the fresh data in the cache
