@@ -6,6 +6,8 @@ export const formatPetShopRecordForList = (record) => ({
   name: record.get('Pet Shop Name') || 'N/A',
   // Return a simple image URL without transformation for the list view
   shopPhotoUrl: record.get('Shop Photo')?.[0]?.url || null,
+  // DEFINITIVE FIX: Add the location field.
+  location: record.get('Location (For Pet Shop)')?.[0] || 'N/A',
 });
 
 // New, safe formatter specifically for pet shop data linked to puppies on the homepage.
