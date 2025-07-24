@@ -17,14 +17,14 @@ const DogCard = ({ dog }) => {
         className="aspect-square w-full object-cover"
       />
       <div className="p-4">
-        <div className="flex justify-between items-baseline">
-          <h3 className="font-bold text-lg text-gray-800 truncate">{dog.name}</h3>
+        <h3 className="font-bold text-lg text-gray-800 truncate">{dog.name}</h3>
+        <div className="flex justify-between items-baseline mt-1">
+          <p className="text-sm text-gray-500">{dog.breed}</p>
           {dog.age && (
-            <p className="text-sm text-gray-600 whitespace-nowrap">{dog.age} months old</p>
+            <p className="text-sm text-gray-600">{dog.age} months old</p>
           )}
         </div>
-        <p className="text-sm text-gray-500 mb-2">{dog.breed}</p>
-        <p className="font-semibold text-gray-900">{formattedPrice}</p>
+        <p className="font-semibold text-gray-900 mt-2">{formattedPrice}</p>
       </div>
     </Link>
   );
