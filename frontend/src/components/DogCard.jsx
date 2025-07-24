@@ -2,29 +2,31 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const DogCard = ({ dog }) => {
-  if (!dog || !dog.image) {
-    return null;
-  }
+  const formattedPrice = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(dog.price || 0);
 
   return (
-    <div key={dog._id} className="bg-white border-2 border-gray-200 rounded-2xl overflow-hidden shadow-sm transition-all duration-300 group hover:shadow-[0_0_20px_5px_rgba(203,255,0,0.8)]">
-      <Link to={`/dog/${dog._id}`}>
-        <div className="p-2">
-          {/* The browser's native lazy loading handles the placeholder state */}
-          <img
-            src={dog.image}
-            alt={dog.name}
-            loading="lazy"
-            className="w-full h-48 object-contain rounded-xl bg-gray-100 group-hover:opacity-80 transition-opacity"
-          />
+    <Link to={`/dogs/${dog._id}`} className="block bg-white rounded-2xl shadow-md overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 no-glow">
+      <img
+        src={`${dog.image}?w=400&h=400&c=fill&q=80`}
+        alt={dog.name}
+        className="aspect-square w-full object-cover"
+      />
+      <div className="p-4">
+        <div className="flex justify-between items-baseline">
+          <h3 className="font-bold text-lg text-gray-800 truncate">{dog.name}</h3>
+          {dog.age && (
+            <p className="text-sm text-gray-600 whitespace-nowrap">{dog.age} months old</p>
+          )}
         </div>
-        <div className="p-4 pt-2">
-          <h2 className="text-lg font-bold text-gray-800 truncate" title={dog.name}>{dog.name}</h2>
-          <p className="text-sm text-gray-600 truncate">{dog.breed}</p>
-          <p className="text-base font-medium text-gray-900 mt-2">${(dog.price ?? 0).toLocaleString()}</p>
-        </div>
-      </Link>
-    </div>
+        <p className="text-sm text-gray-500 mb-2">{dog.breed}</p>
+        <p className="font-semibold text-gray-900">{formattedPrice}</p>
+      </div>
+    </Link>
   );
 };
 
