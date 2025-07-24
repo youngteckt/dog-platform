@@ -11,11 +11,13 @@ const PuppyCard = ({ puppy }) => {
 
   return (
     <Link to={`/dogs/${puppy._id}`} className="block bg-white rounded-2xl shadow-md overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 no-glow">
-      <img
-        src={`${puppy.image}?w=400&h=300&c=fill&q=80`}
-        alt={puppy.name}
-        className="w-full h-48 object-cover"
-      />
+      <div className="aspect-square w-full">
+        <img
+          src={`${puppy.image}?w=400&h=400&c=fill&q=80`}
+          alt={puppy.name}
+          className="w-full h-full object-cover"
+        />
+      </div>
       <div className="p-4">
         <div className="flex justify-between items-baseline">
           <h3 className="font-bold text-lg text-gray-800 truncate">{puppy.name}</h3>
