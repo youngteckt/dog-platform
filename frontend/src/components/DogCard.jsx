@@ -10,7 +10,7 @@ const DogCard = ({ dog }) => {
   }).format(dog.price || 0);
 
   return (
-    <Link to={`/dogs/${dog._id}`} className="block bg-white rounded-2xl shadow-md overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 no-glow">
+    <Link to={`/dog/${dog._id}`} className="block bg-white rounded-2xl shadow-md overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 no-glow">
       <img
         src={`${dog.image}?w=400&h=400&c=fill&q=80`}
         alt={dog.name}
