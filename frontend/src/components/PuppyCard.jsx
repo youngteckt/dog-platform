@@ -10,11 +10,11 @@ const PuppyCard = ({ puppy }) => {
   }).format(puppy.price || 0);
 
   return (
-    <Link to={`/dogs/${puppy._id}`} className="block bg-white rounded-2xl shadow-md overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 no-glow">
+    <Link to={`/dog/${puppy._id}`} className="block bg-white rounded-2xl shadow-md overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 no-glow">
       <img
-        src={`${puppy.image}?w=400&h=400&c=fill&q=80`}
+        src={`${puppy.image}?w=400&h=300&c=fill&q=80`}
         alt={puppy.name}
-        className="aspect-square w-full object-cover"
+        className="w-full h-48 object-cover"
       />
       <div className="p-4">
         <div className="flex justify-between items-baseline">
