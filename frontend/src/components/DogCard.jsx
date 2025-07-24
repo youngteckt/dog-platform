@@ -17,10 +17,10 @@ const DogCard = ({ dog }) => {
         className="aspect-square w-full object-cover"
       />
       <div className="p-4">
-        <div className="flex justify-between items-baseline">
+        <div className="flex justify-between items-baseline gap-2">
           <h3 className="font-bold text-lg text-gray-800 truncate">{dog.name}</h3>
           {dog.age && (
-            <p className="text-sm text-gray-600 whitespace-nowrap">{dog.age} months old</p>
+            <p className="text-xs text-gray-600 whitespace-nowrap flex-shrink-0">{dog.age} months old</p>
           )}
         </div>
         <p className="text-sm text-gray-500 mb-2">{dog.breed}</p>
