@@ -100,7 +100,7 @@ const DogDetailsPage = () => {
             <DetailRow label="Age" value={dog.age ? `${dog.age} months` : 'N/A'} />
             <DetailRow label="Gender" value={dog.gender} />
             <DetailRow label="Microchipped" value={dog.microchipped || 'No'} />
-            <DetailRow label="ID Code" value={dog.id} />
+            <DetailRow label="ID Code" value={dog.idCode || 'N/A'} />
           </div>
 
           {/* Pet Shop Details Card - Updated to match design */}
