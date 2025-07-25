@@ -66,8 +66,7 @@ export const formatPuppyRecord = (record) => {
     price: Number(String(record.get('Price') || '0').replace(/[^0-9.]+/g, '')),
     dob: record.get('Date of Birth') || null,
     gender: record.get('Gender') || 'N/A',
-    vaccinated: record.get('Vaccinated') || false,
-    // DEFINITIVE FIX 2: Provide the 'description' field for the background text.
+    microchipped: record.get('Microchipped') || 'No',
     description: record.get('Background of puppy') || 'No background available.',
     petShopId: (record.get('Pet Shop') && record.get('Pet Shop')[0]) || null,
     petShop: null, // This will be linked in the route handler
