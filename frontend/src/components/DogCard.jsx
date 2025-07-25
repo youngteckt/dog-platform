@@ -12,8 +12,9 @@ const DogCard = ({ dog }) => {
   return (
     <Link to={`/dog/${dog._id}`} className="block bg-white rounded-2xl shadow-md overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 no-glow">
       <img
-        src={`${dog.image}?w=400&h=400&c=fill&q=80`}
+        src={`${dog.image}?w=400&h=400&c=fill&q=80&fm=webp`}
         alt={dog.name}
+        loading="lazy"
         className="aspect-square w-full object-cover"
       />
       <div className="p-4">
