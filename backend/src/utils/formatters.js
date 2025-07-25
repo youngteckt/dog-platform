@@ -64,6 +64,7 @@ export const formatPuppyRecord = (record) => {
     age: record.get('Age of puppy') || null,
     idCode: record.get('Puppy ID') || 'N/A',
     price: Number(String(record.get('Price') || '0').replace(/[^0-9.]+/g, '')),
+    importedFrom: record.get('Imported From') || 'N/A',
     dob: record.get('Date of Birth') || null,
     gender: record.get('Gender') || 'N/A',
     microchipped: record.get('Microchipped') || 'No',

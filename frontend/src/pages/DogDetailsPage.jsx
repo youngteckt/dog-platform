@@ -97,6 +97,7 @@ const DogDetailsPage = () => {
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Puppy Details</h2>
             <DetailRow label="Dog Breed" value={dog.breed || 'N/A'} />
             <DetailRow label="Price" value={dog.price ? `$${dog.price.toLocaleString()}` : 'N/A'} />
+            <DetailRow label="Imported From" value={dog.importedFrom || 'N/A'} />
             <DetailRow label="Age" value={dog.age ? `${dog.age} months` : 'N/A'} />
             <DetailRow label="Gender" value={dog.gender} />
             <DetailRow label="Microchipped" value={dog.microchipped || 'No'} />
