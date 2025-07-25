@@ -98,9 +98,9 @@ const DogDetailsPage = () => {
             <DetailRow label="Dog Breed" value={dog.breed || 'N/A'} />
             <DetailRow label="Price" value={dog.price ? `$${dog.price.toLocaleString()}` : 'N/A'} />
             <DetailRow label="Age" value={dog.age ? `${dog.age} months` : 'N/A'} />
-            <DetailRow label="Gender" value={dog.gender || 'Coming Soon'} />
-            <DetailRow label="ID Code" value={dog.idCode || 'N/A'} />
-            <DetailRow label="Vaccinated" value={dog.vaccinated || 'Coming Soon'} />
+            <DetailRow label="Gender" value={dog.gender} />
+            <DetailRow label="Microchipped" value={dog.microchipped || 'No'} />
+            <DetailRow label="ID Code" value={dog.id} />
           </div>
 
           {/* Pet Shop Details Card - Updated to match design */}
