@@ -25,10 +25,8 @@ router.get('/', async (req, res) => {
 
   try {
     console.log('--- Fetching pet shop list from Airtable ---');
-    // Fetch all records from the 'Pet Shops' table, filtering out any with no name.
-    const records = await base('Pet Shops').select({
-      filterByFormula: "NOT({Name} = '')"
-    }).all();
+    // Fetch all records from the 'Pet Shops' table
+    const records = await base('Pet Shops').select().all();
 
     // Format the records for the list view using the simple formatter
     const petShops = records.map(formatPetShopRecordForList);
