@@ -24,7 +24,7 @@ router.get('/', async (req, res) => {
   }
 
   try {
-    console.log('--- Fetching pet shop list from Airtable ---');
+    console.log('--- V3 DIAGNOSTIC - Fetching pet shop list from Airtable ---');
     // Fetch all records from the 'Pet Shops' table
     const records = await base('Pet Shops').select().all();
 
